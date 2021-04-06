@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import { Box, Container } from '@material-ui/core';
+import { Box } from '@material-ui/core';
+import { Container } from '../index';
 import CSS from 'csstype';
 import React from 'react';
 
 interface BasicLayoutProps {
   navbar?: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined;
-  children?: any;
   footer?: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined;
   style?: CSS.Properties;
 }
@@ -22,7 +22,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     >
       <Box width="100%">{navbar}</Box>
       <Box flexGrow={1} style={style} {...rest}>
-        <Container fixed>{children}</Container>
+        <Container>{children}</Container>
       </Box>
       <Box width="100%">{footer}</Box>
     </Box>

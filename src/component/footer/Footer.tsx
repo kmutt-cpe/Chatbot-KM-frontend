@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Toolbar, Typography } from '@material-ui/core';
+import { Container } from '../';
 
 const Footer = (): ReactElement => {
   return (
@@ -9,9 +10,11 @@ const Footer = (): ReactElement => {
       }}
     >
       <Toolbar>
-        <Typography variant="body1" color="inherit" style={{ color: 'white' }}>
-          © 2020 KMUTT CPE CHATBOT SYSTEM
-        </Typography>
+        <Container>
+          <Typography variant="body1" color="inherit" style={{ color: 'white' }}>
+            © 2020 KMUTT CPE CHATBOT SYSTEM
+          </Typography>
+        </Container>
       </Toolbar>
     </footer>
   );
