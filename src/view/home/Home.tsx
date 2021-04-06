@@ -1,37 +1,35 @@
 import React from 'react';
-import { Box, Container, Typography } from '@material-ui/core';
-import { Footer, LandingBackground, LandingNavBar } from '../../component';
-import { LogoImg } from '../../assets/img';
+import { Box, Typography } from '@material-ui/core';
+import { Footer, LandingNavbar, BasicLayout } from '../../component';
+import { BackgroundImg, LogoImg } from '../../assets/img';
 
 const home: React.FC = () => {
   return (
-    <LandingBackground>
-      <LandingNavBar />
-      <Container>
-        <Box
-          py={3}
-          px={3}
-          display="flex"
-          flexDirection="row"
-          minHeight="85vh"
-          height="400px"
-          alignItems="center"
-        >
-          <Box flexGrow={1} width="50%" justifyContent="center">
-            <img src={LogoImg} alt="Logo" style={{ width: '90%', padding: '5%' }} />
-          </Box>
-          <Box flexGrow={1} width="50%" padding="15px">
-            <Typography variant="h2" color="secondary">
-              CPE @ KMUTT
-            </Typography>
-            <Typography variant="h4" color="secondary">
-              Knowledge Management
-            </Typography>
-          </Box>
+    <BasicLayout
+      footer={<Footer />}
+      navbar={<LandingNavbar />}
+      style={{ backgroundImage: `url(${BackgroundImg})`, width: '100%' }}
+    >
+      <Box display="flex" height="80vh" alignItems="center">
+        <Box flexGrow={1} width="50%" padding="10px" alignContent="end">
+          <img
+            src={LogoImg}
+            alt="Logo"
+            style={{
+              width: '100%',
+            }}
+          />
         </Box>
-      </Container>
-      <Footer />
-    </LandingBackground>
+        <Box flexGrow={1} width="50%" padding="10px">
+          <Typography variant="h2" color="secondary" align="center">
+            CPE @ KMUTT
+          </Typography>
+          <Typography variant="h4" color="secondary" align="center">
+            Knowledge Management
+          </Typography>
+        </Box>
+      </Box>
+    </BasicLayout>
   );
 };
 
