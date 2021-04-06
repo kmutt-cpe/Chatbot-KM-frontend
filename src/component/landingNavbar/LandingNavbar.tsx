@@ -3,7 +3,7 @@ import { Box, Button, Toolbar, AppBar } from '@material-ui/core';
 import { LogoImg } from '../../assets/img';
 import { Color } from '../../assets/css';
 
-const NavBar = (): ReactElement => {
+const LandingNavbar = (): ReactElement => {
   return (
     <AppBar
       position="static"
@@ -39,4 +39,4 @@ const NavBar = (): ReactElement => {
   );
 };
 
-export default NavBar;
+export default LandingNavbar;
