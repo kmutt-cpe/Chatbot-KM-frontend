@@ -21,11 +21,11 @@ const home: React.FC = () => {
           />
         </Box>
         <Box flexGrow={1} width="50%" padding="10px">
-          <Typography variant="h2" color="secondary" align="center">
-            CPE @ KMUTT
+          <Typography color="secondary" align="center" style={{ fontSize: '4em' }}>
+            CPE@KMUTT
           </Typography>
-          <Typography variant="h4" color="secondary" align="center">
-            Knowledge Management
+          <Typography color="secondary" align="center" style={{ fontSize: '1.75em' }}>
+            KNOWLEDGE MANAGEMENT
           </Typography>
         </Box>
       </Box>
