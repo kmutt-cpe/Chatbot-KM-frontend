@@ -16,6 +16,19 @@ const theme = createMuiTheme({
       main: Color.secondary,
     },
   },
+  typography: {
+    // Use the system font instead of the default Roboto font.
+    h1: {
+      fontSize: '20',
+    },
+    h2: {
+      fontSize: '18',
+    },
+    h3: {
+      fontSize: '16',
+    },
+    h4: { fontSize: '14' },
+  },
 });
 
 const ThemeApp: React.FC<ThemeProps> = (props) => {
