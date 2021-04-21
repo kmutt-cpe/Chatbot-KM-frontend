@@ -27,13 +27,22 @@ const CategoryCard: React.FC<CategoryCardInterface> = (props: CategoryCardInterf
       >
         <Box display="flex" flexDirection="row" justifyContent="flex-end">
           <Box mr={1} mt={1}>
-            <Fab color="primary" aria-label="edit" size="small">
-              <EditRoundedIcon />
+            <Fab
+              color="primary"
+              aria-label="edit"
+              size="small"
+              style={{ width: '36px', height: '36px' }}
+            >
+              <EditRoundedIcon style={{ height: '18px' }} />
             </Fab>
           </Box>
           <Box mr={1} mt={1}>
-            <Fab style={{ backgroundColor: Color.red }} aria-label="remove" size="small">
-              <CloseRoundedIcon style={{ color: 'white' }} />
+            <Fab
+              style={{ backgroundColor: Color.red, width: '36px', height: '36px' }}
+              aria-label="remove"
+              size="small"
+            >
+              <CloseRoundedIcon style={{ color: 'white', height: '18px' }} />
             </Fab>
           </Box>
         </Box>
