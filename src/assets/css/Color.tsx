@@ -3,5 +3,6 @@ const color = {
   secondary: '#4e60aa',
   orange: '#f36e27',
   white: 'white',
+  red: 'red',
 };
 export default color;
