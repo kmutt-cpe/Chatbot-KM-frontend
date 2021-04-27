@@ -4,5 +4,7 @@ const color = {
   orange: '#f36e27',
   white: 'white',
   red: 'red',
+  blue: '#3759c1',
+  lightBlue: '#eaf2ff',
 };
 export default color;
