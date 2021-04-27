@@ -4,27 +4,43 @@ import {
   Grid,
   TextField,
   InputAdornment,
-  Button,
   Table,
   TableHead,
   TableBody,
   TableRow,
   TableContainer,
   TableCell,
-  Paper,
   Box,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout } from '../../component';
+import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
 import { categories } from './domain/category';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
-import { CSSProperties } from '@material-ui/styles';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
-import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
+import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import DeleteCategory from './assets/DeleteCategory';
+import CreateCategory from './assets/CreateCategory';
+import EditCategory from './assets/EditCategory';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
+
+const StyledTableRow = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '&:nth-of-type(odd)': {
+        backgroundColor: Color.lightBlue,
+      },
+      '&:hover': {
+        backgroundColor: '#b2c9f0 !important',
+      },
+    },
+  })
+)(TableRow);
 
 const CategoryManagement: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
+  const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
+  const onClickCategory = () => {
+    // todo: Implement changing category management
+  };
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
@@ -48,13 +64,11 @@ const CategoryManagement: React.FC = () => {
             />
           </Grid>
           <Grid xs={2} item>
-            <Button color="primary" variant="contained" style={{ fontSize: '12px' }}>
-              CREATE CATEGORY
-            </Button>
+            <CreateCategory />
           </Grid>
         </Grid>
 
-        <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+        <TableContainer style={{ marginTop: '20px' }}>
           <Table aria-label="customized table">
             <colgroup>
               <col style={{ width: '80%' }} />
@@ -62,7 +76,7 @@ const CategoryManagement: React.FC = () => {
             </colgroup>
             <TableHead>
               <TableRow style={{ backgroundColor: Color.blue }}>
-                <TableCell style={tableHeadStyle} align="center">
+                <TableCell style={{ ...tableHeadStyle, ...borderColumn }} align="center">
                   Category
                 </TableCell>
                 <TableCell style={tableHeadStyle} align="center">
@@ -71,30 +85,31 @@ const CategoryManagement: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categories.map((category, i) => {
+              {categories.map((category) => {
                 return (
-                  <TableRow
-                    key={category.id}
-                    style={
-                      i % 2 === 0
-                        ? { backgroundColor: Color.white }
-                        : { backgroundColor: Color.lightBlue }
-                    }
-                  >
-                    <TableCell component="th" scope="row" align="center">
-                      {category.category}
-                    </TableCell>
-                    <TableCell component="th" scope="row" align="center">
-                      <Box display="flex" flexDirection="row" justifyContent="center">
-                        <Box mr={1}>
-                          <EditRoundedIcon style={{ color: Color.secondary, height: '18px' }} />
+                  <>
+                    <StyledTableRow hover key={category.id}>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        align="center"
+                        onClick={onClickCategory}
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                      >
+                        {category.category}
+                      </TableCell>
+                      <TableCell component="th" scope="row" align="center">
+                        <Box display="flex" flexDirection="row" justifyContent="center">
+                          <Box mr={1}>
+                            <EditCategory {...category} />
+                          </Box>
+                          <Box mr={1}>
+                            <DeleteCategory {...category} />
+                          </Box>
                         </Box>
-                        <Box mr={1}>
-                          <DeleteCategory {...category} />
-                        </Box>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                    </StyledTableRow>
+                  </>
                 );
               })}
             </TableBody>
