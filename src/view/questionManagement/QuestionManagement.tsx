@@ -44,8 +44,7 @@ const questionManagement: React.FC = () => {
         </Grid>
         <GridList cellHeight={200} cols={4}>
           {categories.map((category) => (
-            // eslint-disable-next-line react/jsx-key
-            <GridListTile>
+            <GridListTile key={category.id}>
               <CategoryCard {...category} key={category.id} />
             </GridListTile>
           ))}
