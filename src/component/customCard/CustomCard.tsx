@@ -1,6 +1,5 @@
 import React from 'react';
 import { Typography, Card, CardMedia, CardContent, CardActionArea } from '@material-ui/core';
-import { CSSProperties } from '@material-ui/styles';
 
 interface CustomCardInterface {
   id?: string;
