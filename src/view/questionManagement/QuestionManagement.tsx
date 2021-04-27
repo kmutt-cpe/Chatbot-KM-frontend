@@ -1,8 +1,18 @@
 import React from 'react';
-import { Typography, Grid, GridList, GridListTile } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  GridList,
+  GridListTile,
+  TextField,
+  InputAdornment,
+} from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
-import CategoryCard from './CategoryCard';
-import { categories } from './category';
+import CategoryCard from './assets/CategoryCard';
+import CreateCategoryPopup from './assets/CreateCategoryPopup';
+import { categories } from './domain/category';
+import SearchIcon from '@material-ui/icons/Search';
+
 const questionManagement: React.FC = () => {
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -12,11 +22,29 @@ const questionManagement: React.FC = () => {
             Questions Management
           </Typography>
         </Grid>
+        <Grid container direction="row" justify="center" spacing={2}>
+          <Grid xs={10} item>
+            <TextField
+              style={{ width: '100%' }}
+              placeholder="Search…"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid xs={2} item>
+            <CreateCategoryPopup />
+          </Grid>
+        </Grid>
         <GridList cellHeight={200} cols={4}>
           {categories.map((category) => (
             // eslint-disable-next-line react/jsx-key
             <GridListTile>
-              <CategoryCard {...category} />
+              <CategoryCard {...category} key={category.id} />
             </GridListTile>
           ))}
         </GridList>
