@@ -26,6 +26,9 @@ const StaffNavbar = (): ReactElement => {
               <div style={{ color: Color.secondary }}>QUESTIONS</div>
             </Box>
             <Box mr={2.5} my={0.5}>
+              <div style={{ color: Color.secondary }}>CATEGORY</div>
+            </Box>
+            <Box mr={2.5} my={0.5}>
               <div style={{ color: Color.secondary }}>USERS</div>
             </Box>
             <UserMenu />
