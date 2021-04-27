@@ -12,11 +12,11 @@ import {
   TableCell,
   Box,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
+import { StaffNavbar, BasicLayout } from '../../component';
 import { categories } from './domain/category';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
-import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
+import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import DeleteCategory from './assets/DeleteCategory';
 import CreateCategory from './assets/CreateCategory';
 import EditCategory from './assets/EditCategory';
