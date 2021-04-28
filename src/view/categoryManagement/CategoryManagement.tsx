@@ -10,6 +10,7 @@ import {
   TableRow,
   TableContainer,
   TableCell,
+  TablePagination,
   Box,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
@@ -41,6 +42,19 @@ const CategoryManagement: React.FC = () => {
   const onClickCategory = () => {
     // todo: Implement changing category management
   };
+
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = React.useState(0);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
@@ -85,36 +99,50 @@ const CategoryManagement: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categories.map((category) => {
-                return (
-                  <>
-                    <StyledTableRow hover key={category.id}>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        align="center"
-                        onClick={onClickCategory}
-                        style={{ ...borderColumn, cursor: 'pointer' }}
-                      >
-                        {category.category}
-                      </TableCell>
-                      <TableCell component="th" scope="row" align="center">
-                        <Box display="flex" flexDirection="row" justifyContent="center">
-                          <Box mr={1}>
-                            <EditCategory {...category} />
+              {categories
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((category) => {
+                  return (
+                    <>
+                      <StyledTableRow hover key={category.id}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          align="center"
+                          onClick={onClickCategory}
+                          style={{ ...borderColumn, cursor: 'pointer' }}
+                        >
+                          {category.category}
+                        </TableCell>
+                        <TableCell component="th" scope="row" align="center">
+                          <Box display="flex" flexDirection="row" justifyContent="center">
+                            <Box mr={1}>
+                              <EditCategory {...category} />
+                            </Box>
+                            <Box mr={1}>
+                              <DeleteCategory {...category} />
+                            </Box>
                           </Box>
-                          <Box mr={1}>
-                            <DeleteCategory {...category} />
-                          </Box>
-                        </Box>
-                      </TableCell>
-                    </StyledTableRow>
-                  </>
-                );
-              })}
+                        </TableCell>
+                      </StyledTableRow>
+                    </>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 100]}
+            component="div"
+            count={categories.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Box>
       </Grid>
     </BasicLayout>
   );
