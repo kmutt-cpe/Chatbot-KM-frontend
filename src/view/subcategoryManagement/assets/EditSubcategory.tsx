@@ -27,7 +27,7 @@ const EditCategory: React.FC<EditCategoryProps> = (props: EditCategoryProps) => 
   return (
     <div>
       <IconButton onClick={onOpenModal} size="small">
-        <EditRoundedIcon style={{ color: Color.secondary }} onClick={onOpenModal} />
+        <EditRoundedIcon style={{ color: Color.secondary }} />
       </IconButton>
       <InputModal
         open={modal}
