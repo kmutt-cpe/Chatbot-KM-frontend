@@ -10,6 +10,7 @@ import {
   TableRow,
   TableContainer,
   TableCell,
+  TablePagination,
   Box,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
@@ -25,7 +26,7 @@ import { CSSProperties } from '@material-ui/core/styles/withStyles';
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      '&:nth-of-type(odd)': {
+      '&:nth-of-type(even)': {
         backgroundColor: Color.lightBlue,
       },
       '&:hover': {
@@ -47,6 +48,17 @@ const SubcategoryManagement: React.FC<SubcategoryManagementProps> = (
 ) => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = React.useState(0);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -100,35 +112,49 @@ const SubcategoryManagement: React.FC<SubcategoryManagementProps> = (
               </TableRow>
             </TableHead>
             <TableBody>
-              {subcategories.map((subcategory) => {
-                return (
-                  <>
-                    <StyledTableRow hover key={subcategory.id}>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        align="center"
-                        style={{ ...borderColumn }}
-                      >
-                        {subcategory.subcategory}
-                      </TableCell>
-                      <TableCell component="th" scope="row" align="center">
-                        <Box display="flex" flexDirection="row" justifyContent="center">
-                          <Box mr={1}>
-                            <EditSubcategory {...subcategory} />
+              {subcategories
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((subcategory) => {
+                  return (
+                    <>
+                      <StyledTableRow hover key={subcategory.id}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          align="center"
+                          style={{ ...borderColumn }}
+                        >
+                          {subcategory.subcategory}
+                        </TableCell>
+                        <TableCell component="th" scope="row" align="center">
+                          <Box display="flex" flexDirection="row" justifyContent="center">
+                            <Box mr={1}>
+                              <EditSubcategory {...subcategory} />
+                            </Box>
+                            <Box mr={1}>
+                              <DeleteSubcategory {...subcategory} />
+                            </Box>
                           </Box>
-                          <Box mr={1}>
-                            <DeleteSubcategory {...subcategory} />
-                          </Box>
-                        </Box>
-                      </TableCell>
-                    </StyledTableRow>
-                  </>
-                );
-              })}
+                        </TableCell>
+                      </StyledTableRow>
+                    </>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 100]}
+            component="div"
+            count={subcategories.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Box>
       </Grid>
     </BasicLayout>
   );
