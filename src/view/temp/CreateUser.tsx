@@ -2,17 +2,11 @@ import React from 'react';
 import { Typography, Grid, TextField, Link, Button } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
 import { Color } from '../../assets/css';
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import { useFormik } from 'formik';
-import { UserType, ErrorUserType } from './utils/UserType';
+import { UserType } from './utils/UserType';
 import { ValidateUserForm } from './utils/ValidateUserForm';
 
-interface EditUserProps {
-  user: { id: string; username: string; password: string; name: string };
-}
-
-const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
+const CreateUser: React.FC = () => {
   const labelWidth = 3;
   const inputWidth = 9;
 
@@ -33,10 +27,10 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
 
   const formik = useFormik<UserType>({
     initialValues: {
-      username: props.user.username,
-      password: props.user.password,
-      confirmPassword: props.user.password,
-      name: props.user.name,
+      username: '',
+      password: '',
+      confirmPassword: '',
+      name: '',
     },
     validate: ValidateUserForm,
     onSubmit: (values) => {
@@ -56,7 +50,7 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
-            EDIT USER
+            CREATE USER
           </Typography>
         </Grid>
         <Grid
@@ -180,7 +174,7 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
               </Grid>
               <Grid item>
                 <Button color="primary" variant="contained" type="submit">
-                  Save
+                  Create
                 </Button>
               </Grid>
             </Grid>
@@ -201,4 +195,4 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
   );
 };
 
-export default EditUser;
+export default CreateUser;

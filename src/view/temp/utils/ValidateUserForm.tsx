@@ -20,7 +20,7 @@ export const ValidateUserForm: FormikConfig<UserType>['validate'] = (values) => 
 
   if (!values.confirmPassword) {
     errors.confirmPassword = 'Required';
-  } else if (values.password != values.confirmPassword) {
+  } else if (values.password !== values.confirmPassword) {
     errors.confirmPassword = 'Confirm password must same with password';
   }
 

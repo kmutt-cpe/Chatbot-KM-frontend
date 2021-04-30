@@ -2,13 +2,15 @@ import React from 'react';
 import { Typography, Grid, TextField, Link, Button } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
 import { Color } from '../../assets/css';
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import { useFormik } from 'formik';
-import { UserType, ErrorUserType } from './utils/UserType';
+import { UserType } from './utils/UserType';
 import { ValidateUserForm } from './utils/ValidateUserForm';
 
-const CreateUser: React.FC = () => {
+interface EditUserProps {
+  user: { id: string; username: string; password: string; name: string };
+}
+
+const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
   const labelWidth = 3;
   const inputWidth = 9;
 
@@ -29,10 +31,10 @@ const CreateUser: React.FC = () => {
 
   const formik = useFormik<UserType>({
     initialValues: {
-      username: '',
-      password: '',
-      confirmPassword: '',
-      name: '',
+      username: props.user.username,
+      password: props.user.password,
+      confirmPassword: props.user.password,
+      name: props.user.name,
     },
     validate: ValidateUserForm,
     onSubmit: (values) => {
@@ -52,7 +54,7 @@ const CreateUser: React.FC = () => {
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
-            CREATE USER
+            EDIT USER
           </Typography>
         </Grid>
         <Grid
@@ -176,7 +178,7 @@ const CreateUser: React.FC = () => {
               </Grid>
               <Grid item>
                 <Button color="primary" variant="contained" type="submit">
-                  Create
+                  Save
                 </Button>
               </Grid>
             </Grid>
@@ -197,4 +199,4 @@ const CreateUser: React.FC = () => {
   );
 };
 
-export default CreateUser;
+export default EditUser;
