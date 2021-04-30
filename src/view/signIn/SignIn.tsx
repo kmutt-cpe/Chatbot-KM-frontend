@@ -4,16 +4,16 @@ import { LandingNavbar, Footer, BasicLayout } from '../../component';
 import { BackgroundImg, LogoImg } from '../../assets/img';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
-import { LoginType } from './utils/LoginType';
-import { ValidateLoginForm } from './utils/ValidateLoginForm';
+import { SignInType } from './utils/SignInType';
+import { ValidateSignInForm } from './utils/ValidateSignInForm';
 
-const Login = () => {
-  const formik = useFormik<LoginType>({
+const SignIn = (): React.ReactElement => {
+  const formik = useFormik<SignInType>({
     initialValues: {
       username: '',
       password: '',
     },
-    validate: ValidateLoginForm,
+    validate: ValidateSignInForm,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
@@ -95,4 +95,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;
