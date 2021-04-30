@@ -4,3 +4,4 @@ export { default as QuestionManagement } from './questionManagement/QuestionMana
 export { default as CategoryManagement } from './categoryManagement/CategoryManagement';
 export { default as SubcategoryManagement } from './subcategoryManagement/SubcategoryManagement';
 export { default as CreateUser } from './UserForm/CreateUser';
+export { default as EditUser } from './UserForm/EditUser';
