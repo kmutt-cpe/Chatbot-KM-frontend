@@ -5,5 +5,5 @@ export { default as CategoryManagement } from './categoryManagement/CategoryMana
 export { default as SubcategoryManagement } from './subcategoryManagement/SubcategoryManagement';
 export { default as QuestionList } from './questionList/QuestionList';
 export { default as UserManagement } from './userManagement/UserManagement';
-export { default as CreateUser } from './UserForm/CreateUser';
-export { default as EditUser } from './UserForm/EditUser';
+export { default as CreateUser } from './userForm/CreateUser';
+export { default as EditUser } from './userForm/EditUser';
