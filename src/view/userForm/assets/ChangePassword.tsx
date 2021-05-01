@@ -21,7 +21,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       confirmPassword: '',
     },
     validate: ValidateEditPasswordForm,
-    onSubmit: (values, actions) => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
       setUpdatePasswordPopup(true);
       props.setChangePasswordState(false);
