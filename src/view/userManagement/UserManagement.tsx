@@ -124,26 +124,29 @@ const UserManagement: React.FC = () => {
                   <>
                     <StyledTableRow hover key={user.id}>
                       <TableCell
-                        component="th"
+                        component="td"
                         scope="row"
                         align="center"
-                        style={{ ...borderColumn }}
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => onClickViewUser(user)}
                       >
                         {user.role}
                       </TableCell>
                       <TableCell
-                        component="th"
+                        component="td"
                         scope="row"
                         align="center"
-                        style={{ ...borderColumn }}
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => onClickViewUser(user)}
                       >
                         {user.username}
                       </TableCell>
                       <TableCell
-                        component="th"
+                        component="td"
                         scope="row"
                         align="center"
-                        style={{ ...borderColumn }}
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => onClickViewUser(user)}
                       >
                         {user.name}
                       </TableCell>
