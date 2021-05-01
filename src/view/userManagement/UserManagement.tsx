@@ -48,6 +48,11 @@ const UserManagement: React.FC = () => {
     // todo: Implement edit user
   };
 
+  const onClickViewUser = (user: { id: string; username: string; name: string; role: string }) => {
+    // todo: Implement view user
+    alert(user);
+  };
+
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
 
