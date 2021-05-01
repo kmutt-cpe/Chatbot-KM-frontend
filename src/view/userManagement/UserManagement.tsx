@@ -48,6 +48,11 @@ const UserManagement: React.FC = () => {
     // todo: Implement edit user
   };
 
+  const onClickViewUser = (user: { id: string; username: string; name: string; role: string }) => {
+    // todo: Implement view user
+    alert(user);
+  };
+
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
 
@@ -124,26 +129,29 @@ const UserManagement: React.FC = () => {
                   <>
                     <StyledTableRow hover key={user.id}>
                       <TableCell
-                        component="th"
+                        component="td"
                         scope="row"
                         align="center"
-                        style={{ ...borderColumn }}
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => onClickViewUser(user)}
                       >
                         {user.role}
                       </TableCell>
                       <TableCell
-                        component="th"
+                        component="td"
                         scope="row"
                         align="center"
-                        style={{ ...borderColumn }}
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => onClickViewUser(user)}
                       >
                         {user.username}
                       </TableCell>
                       <TableCell
-                        component="th"
+                        component="td"
                         scope="row"
                         align="center"
-                        style={{ ...borderColumn }}
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => onClickViewUser(user)}
                       >
                         {user.name}
                       </TableCell>
