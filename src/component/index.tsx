@@ -6,3 +6,4 @@ export { default as Container } from './container/Container';
 export { default as ConfirmModal } from './confirmModal/ConfirmModal';
 export { default as InputModal } from './inputModal/InputModal';
 export { default as CustomCard } from './customCard/CustomCard';
+export { default as AlertModal } from './alertModal/AlertModal';

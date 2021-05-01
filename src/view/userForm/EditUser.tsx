@@ -3,40 +3,32 @@ import { Typography, Grid, TextField, Link, Button } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
-import { UserType } from './utils/UserType';
-import { ValidateUserForm } from './utils/ValidateUserForm';
+import { EditUserType } from './utils/UserType';
+import { ValidateEditUserForm } from './utils/ValidateUserForm';
+import ChangePassword from './assets/ChangePassword';
 
 interface EditUserProps {
-  user: { id: string; username: string; password: string; name: string };
+  user: { id: string; username: string; name: string };
 }
 
 const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
+  const [discardDisplay, setDiscardDisplay] = React.useState(false);
+  const [changePasswordState, setChangePasswordState] = React.useState(false);
   const labelWidth = 3;
   const inputWidth = 9;
 
-  const [discardDisplay, setDiscardDisplay] = React.useState(false);
-
-  const openDiscardModal = () => {
-    setDiscardDisplay(true);
-  };
-
-  const closeDiscardModal = () => {
-    setDiscardDisplay(false);
-  };
-
   const onDiscard = () => {
     // todo: Implement discard create user
+    if (changePasswordState === true) setChangePasswordState(false);
     setDiscardDisplay(false);
   };
 
-  const formik = useFormik<UserType>({
+  const formikUser = useFormik<EditUserType>({
     initialValues: {
       username: props.user.username,
-      password: props.user.password,
-      confirmPassword: props.user.password,
       name: props.user.name,
     },
-    validate: ValidateUserForm,
+    validate: ValidateEditUserForm,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
@@ -47,7 +39,7 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
           <Typography color="secondary">
-            <Link href="#" onClick={openDiscardModal}>
+            <Link href="#" onClick={() => setDiscardDisplay(true)}>
               back
             </Link>
           </Typography>
@@ -66,7 +58,7 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
             marginBottom: '20px',
           }}
         />
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formikUser.handleSubmit}>
           <Grid item container direction="column" spacing={3}>
             <Grid item container direction="row" spacing={3}>
               <Grid item xs={labelWidth}>
@@ -86,65 +78,18 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
                   id="username"
                   variant="outlined"
                   style={{ width: '100%' }}
-                  onChange={formik.handleChange}
-                  value={formik.values.username}
-                  error={formik.errors.username ? true : false}
-                  helperText={formik.errors.username || null}
+                  onChange={formikUser.handleChange}
+                  value={formikUser.values.username}
+                  error={formikUser.errors.username ? true : false}
+                  helperText={formikUser.errors.username || null}
+                  disabled={changePasswordState}
                 />
               </Grid>
             </Grid>
-            <Grid item container direction="row" spacing={3}>
-              <Grid item xs={labelWidth}>
-                <Typography
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    height: '100%',
-                  }}
-                >
-                  Password
-                </Typography>
-              </Grid>
-              <Grid item xs={inputWidth}>
-                <TextField
-                  id="password"
-                  type="password"
-                  variant="outlined"
-                  style={{ width: '100%' }}
-                  onChange={formik.handleChange}
-                  value={formik.values.password}
-                  error={formik.errors.password ? true : false}
-                  helperText={formik.errors.password || null}
-                />
-              </Grid>
-            </Grid>
-            <Grid item container direction="row" spacing={3}>
-              <Grid item xs={labelWidth}>
-                <Typography
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    height: '100%',
-                  }}
-                >
-                  Confirm password
-                </Typography>
-              </Grid>
-              <Grid item xs={inputWidth}>
-                <TextField
-                  id="confirmPassword"
-                  type="password"
-                  variant="outlined"
-                  style={{ width: '100%' }}
-                  onChange={formik.handleChange}
-                  value={formik.values.confirmPassword}
-                  error={formik.errors.confirmPassword ? true : false}
-                  helperText={formik.errors.confirmPassword || null}
-                />
-              </Grid>
-            </Grid>
+            <ChangePassword
+              changePasswordState={changePasswordState}
+              setChangePasswordState={setChangePasswordState}
+            />
             <Grid item container direction="row" spacing={3}>
               <Grid item xs={labelWidth}>
                 <Typography
@@ -163,21 +108,31 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
                   id="name"
                   variant="outlined"
                   style={{ width: '100%' }}
-                  onChange={formik.handleChange}
-                  value={formik.values.name}
-                  error={formik.errors.name ? true : false}
-                  helperText={formik.errors.name || null}
+                  onChange={formikUser.handleChange}
+                  value={formikUser.values.name}
+                  error={formikUser.errors.name ? true : false}
+                  helperText={formikUser.errors.name || null}
+                  disabled={changePasswordState}
                 />
               </Grid>
             </Grid>
             <Grid item container direction="row" spacing={2} justify="flex-end">
               <Grid item>
-                <Button color="primary" onClick={openDiscardModal}>
+                <Button
+                  color="primary"
+                  onClick={() => setDiscardDisplay(true)}
+                  disabled={changePasswordState}
+                >
                   Cancel
                 </Button>
               </Grid>
               <Grid item>
-                <Button color="primary" variant="contained" type="submit">
+                <Button
+                  color="primary"
+                  variant="contained"
+                  type="submit"
+                  disabled={changePasswordState}
+                >
                   Save
                 </Button>
               </Grid>
@@ -187,8 +142,8 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
       </Grid>
       <ConfirmModal
         onAction={onDiscard}
-        onReject={closeDiscardModal}
-        onClose={closeDiscardModal}
+        onReject={() => setDiscardDisplay(false)}
+        onClose={() => setDiscardDisplay(false)}
         dialogTitle={'Discard'}
         dialogContent={'Are you sure you want to discard?'}
         rejectText="Cancel"

@@ -3,8 +3,8 @@ import { Typography, Grid, TextField, Link, Button } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
-import { UserType } from './utils/UserType';
-import { ValidateUserForm } from './utils/ValidateUserForm';
+import { CreateUserType } from './utils/UserType';
+import { ValidateCreateUserForm } from './utils/ValidateUserForm';
 
 const CreateUser: React.FC = () => {
   const labelWidth = 3;
@@ -25,14 +25,14 @@ const CreateUser: React.FC = () => {
     setDiscardDisplay(false);
   };
 
-  const formik = useFormik<UserType>({
+  const formik = useFormik<CreateUserType>({
     initialValues: {
       username: '',
       password: '',
       confirmPassword: '',
       name: '',
     },
-    validate: ValidateUserForm,
+    validate: ValidateCreateUserForm,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
@@ -185,7 +185,7 @@ const CreateUser: React.FC = () => {
         onAction={onDiscard}
         onReject={closeDiscardModal}
         onClose={closeDiscardModal}
-        dialogTitle={'Discard'}
+        dialogTitle={'Discard Create'}
         dialogContent={'Are you sure you want to discard?'}
         rejectText="Cancel"
         actionText="Discard"
