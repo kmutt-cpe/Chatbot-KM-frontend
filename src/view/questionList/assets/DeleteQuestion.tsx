@@ -34,7 +34,8 @@ const DeleteQuestion: React.FC<DeleteQuestionProps> = (props: DeleteQuestionProp
         onAction={onDelete}
         onReject={onCloseModal}
         onClose={onCloseModal}
-        dialogContent={`Are you sure, you want to delete ${props.question}?`}
+        dialogTitle="Delete confirmation"
+        dialogContent={`Are you sure you want to delete ${props.question}?`}
         actionText="Delete"
         rejectText="Cancel"
       />

@@ -34,7 +34,8 @@ const DeleteCategory: React.FC<DeleteCategoryProps> = (props: DeleteCategoryProp
         onAction={onDelete}
         onReject={onCloseModal}
         onClose={onCloseModal}
-        dialogContent={`Are you sure, you want to delete ${props.category}?`}
+        dialogTitle="Delete confirmation"
+        dialogContent={`Are you sure you want to delete ${props.category}?`}
         actionText="Delete"
         rejectText="Cancel"
       />

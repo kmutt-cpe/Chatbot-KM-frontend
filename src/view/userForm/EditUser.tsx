@@ -144,7 +144,7 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
         onAction={onDiscard}
         onReject={() => setDiscardDisplay(false)}
         onClose={() => setDiscardDisplay(false)}
-        dialogTitle={'Discard'}
+        dialogTitle={'Discard changes?'}
         dialogContent={'Are you sure you want to discard?'}
         rejectText="Cancel"
         actionText="Discard"

@@ -185,7 +185,7 @@ const CreateUser: React.FC = () => {
         onAction={onDiscard}
         onReject={closeDiscardModal}
         onClose={closeDiscardModal}
-        dialogTitle={'Discard Create'}
+        dialogTitle={'Discard changes?'}
         dialogContent={'Are you sure you want to discard?'}
         rejectText="Cancel"
         actionText="Discard"
