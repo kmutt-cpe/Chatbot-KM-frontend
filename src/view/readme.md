@@ -5,3 +5,5 @@
 - `categoryManagement` -> First page of category management
 - `subcategoryManagement` -> First page of subcategory management
 - `userManagement` -> First page of user management
+- `userForm` -> Consists of CreateUser and EditUser
+- `userView` -> User information
