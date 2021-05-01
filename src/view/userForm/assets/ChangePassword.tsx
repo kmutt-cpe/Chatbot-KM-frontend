@@ -17,25 +17,18 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
   const [updatePasswordPopup, setUpdatePasswordPopup] = React.useState(false);
   const formikPassword = useFormik<EditPasswordType>({
     initialValues: {
-      oldPassword: '',
       password: '',
       confirmPassword: '',
     },
     validate: ValidateEditPasswordForm,
     onSubmit: (values, actions) => {
-      /* Mock up the correct password */
-      if (values.oldPassword === 'tk') {
-        alert(JSON.stringify(values, null, 2));
-        setUpdatePasswordPopup(true);
-        props.setChangePasswordState(false);
-        formikPassword.setValues({
-          oldPassword: '',
-          password: '',
-          confirmPassword: '',
-        });
-      } else {
-        actions.setFieldError('oldPassword', 'Password is not correct');
-      }
+      alert(JSON.stringify(values, null, 2));
+      setUpdatePasswordPopup(true);
+      props.setChangePasswordState(false);
+      formikPassword.setValues({
+        password: '',
+        confirmPassword: '',
+      });
     },
   });
 
@@ -45,7 +38,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
     props.setChangePasswordState(false);
     setDiscardPopup(false);
     formikPassword.setValues({
-      oldPassword: '',
       password: '',
       confirmPassword: '',
     });
@@ -56,32 +48,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       {props.changePasswordState ? (
         <Grid item component="form" onSubmit={formikPassword.handleSubmit}>
           <Paper style={{ padding: '30px' }}>
-            <Grid container direction="row" spacing={3}>
-              <Grid item xs={labelWidth}>
-                <Typography
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    height: '100%',
-                  }}
-                >
-                  Old password
-                </Typography>
-              </Grid>
-              <Grid item xs={inputWidth}>
-                <TextField
-                  id="oldPassword"
-                  type="password"
-                  variant="outlined"
-                  style={{ width: '100%' }}
-                  onChange={formikPassword.handleChange}
-                  value={formikPassword.values.oldPassword}
-                  error={formikPassword.errors.oldPassword ? true : false}
-                  helperText={formikPassword.errors.oldPassword || null}
-                />
-              </Grid>
-            </Grid>
             <Grid container direction="row" spacing={3}>
               <Grid item xs={labelWidth}>
                 <Typography
