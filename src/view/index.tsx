@@ -7,3 +7,4 @@ export { default as QuestionList } from './questionList/QuestionList';
 export { default as UserManagement } from './userManagement/UserManagement';
 export { default as CreateUser } from './userForm/CreateUser';
 export { default as EditUser } from './userForm/EditUser';
+export { default as UserView } from './userView/UserView';
