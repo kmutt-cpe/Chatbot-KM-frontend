@@ -2,6 +2,7 @@
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import React from 'react';
 import { Color } from '../css';
+// import Sukhumvit from '../css/fonts/Sukhumvit/SukhumvitSet-Bold.ttf';
 
 interface ThemeProps {
   children: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined;
@@ -18,6 +19,7 @@ const theme = createMuiTheme({
   },
   typography: {
     // Use the system font instead of the default Roboto font.
+    fontFamily: ['Roboto', 'Sukhumvit'].join(','),
     h1: {
       fontSize: '20',
     },
