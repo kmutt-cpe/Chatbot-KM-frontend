@@ -3,13 +3,29 @@ import { Typography, Grid, Link, Button } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
 import { Color } from '../../assets/css';
 
-interface UserViewProps {
-  user: { id: string; username: string; name: string; role: string };
+interface QuestionViewProps {
+  faq: {
+    id: string;
+    question: string;
+    answer: string;
+    subcategory: {
+      id: string;
+      subcategory: string;
+    };
+    category: { id: string; category: string };
+    lastEditor: {
+      id: string;
+      name: string;
+      username: string;
+      role: string;
+    };
+    updatedDate: Date;
+  };
 }
 
-const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
-  const labelWidth = 6;
-  const inputWidth = 6;
+const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => {
+  const labelWidth = 5;
+  const inputWidth = 7;
 
   const [deletePopup, setDeletePopup] = React.useState(false);
 
@@ -38,7 +54,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
-            USER
+            QUESTION
           </Typography>
         </Grid>
         <Grid
@@ -50,7 +66,6 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
             marginBottom: '40px',
           }}
         />
-
         <Grid item container direction="column" spacing={3}>
           <Grid item container direction="row" spacing={5}>
             <Grid item xs={labelWidth}>
@@ -63,7 +78,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                 }}
                 color="secondary"
               >
-                Role
+                คำถาม
               </Typography>
             </Grid>
             <Grid item xs={inputWidth}>
@@ -75,7 +90,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                   height: '100%',
                 }}
               >
-                {props.user.role}
+                {props.faq.question}
               </Typography>
             </Grid>
           </Grid>
@@ -90,7 +105,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                 }}
                 color="secondary"
               >
-                Username
+                หมวดหมู่
               </Typography>
             </Grid>
             <Grid item xs={inputWidth}>
@@ -102,7 +117,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                   height: '100%',
                 }}
               >
-                {props.user.username}
+                {props.faq.category.category}
               </Typography>
             </Grid>
           </Grid>
@@ -117,7 +132,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                 }}
                 color="secondary"
               >
-                Name
+                หมวดหมู่ย่อย
               </Typography>
             </Grid>
             <Grid item xs={inputWidth}>
@@ -129,7 +144,88 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                   height: '100%',
                 }}
               >
-                {props.user.name}
+                {props.faq.subcategory.subcategory}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                ผู้เขียนล่าสุด
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {props.faq.lastEditor.name}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                วันที่แก้ไขล่าสุด
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {`${props.faq.updatedDate.getDate()}/${props.faq.updatedDate.getMonth()}/${props.faq.updatedDate.getFullYear()}`}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                คำตอบ
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {props.faq.answer}
               </Typography>
             </Grid>
           </Grid>
@@ -160,7 +256,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
         onReject={closeDiscardModal}
         onClose={closeDiscardModal}
         dialogTitle={'Delete user?'}
-        dialogContent={`Are you sure you want to delete ${props.user.username}?`}
+        dialogContent={`Are you sure you want to delete ${props.faq.question}?`}
         rejectText="Cancel"
         actionText="Delete"
         open={deletePopup}
@@ -169,4 +265,4 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
   );
 };
 
-export default UserView;
+export default QuestionView;
