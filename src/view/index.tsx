@@ -4,6 +4,7 @@ export { default as QuestionManagement } from './questionManagement/QuestionMana
 export { default as CategoryManagement } from './categoryManagement/CategoryManagement';
 export { default as SubcategoryManagement } from './subcategoryManagement/SubcategoryManagement';
 export { default as QuestionList } from './questionList/QuestionList';
+export { default as QuestionView } from './questionView/QuestionView';
 export { default as UserManagement } from './userManagement/UserManagement';
 export { default as CreateUser } from './userForm/CreateUser';
 export { default as EditUser } from './userForm/EditUser';
