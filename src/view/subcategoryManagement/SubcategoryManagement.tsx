@@ -13,8 +13,9 @@ import {
   TablePagination,
   Box,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout } from '../../component';
-import { subcategories } from './domain/subcategory';
+import { StaffNavbar, BasicLayout, BackButton } from '../../component';
+import { subcategories as subcategoriesDB } from './domain/subcategory.mock';
+import { categories } from './domain/category.mock';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -22,6 +23,7 @@ import DeleteSubcategory from './assets/DeleteSubcategory';
 import CreateSubcategory from './assets/CreateSubcategory';
 import EditSubcategory from './assets/EditSubcategory';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import { useHistory, useParams } from 'react-router-dom';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -36,20 +38,21 @@ const StyledTableRow = withStyles((theme: Theme) =>
   })
 )(TableRow);
 
-interface SubcategoryManagementProps {
-  category: {
-    id: string;
-    category: string;
-  };
-}
-
-const SubcategoryManagement: React.FC<SubcategoryManagementProps> = (
-  props: SubcategoryManagementProps
-) => {
+const SubcategoryManagement: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
+
+  const history = useHistory();
+  const { categoryId } = useParams<{ categoryId: string }>();
+
+  // todo: Implement get subcategories from backend-api instead
+  const category = categories.find((category) => category.id === categoryId);
+  if (!category) history.push('/category-management');
+  const subcategories = subcategoriesDB.filter(
+    (subcategory) => subcategory.category.id === categoryId
+  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -64,7 +67,7 @@ const SubcategoryManagement: React.FC<SubcategoryManagementProps> = (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
-          <Typography color="secondary">back</Typography>
+          <BackButton path="/category-management" />
         </Grid>
         <Grid item>
           <Typography variant="h2" color="primary" style={{ marginBottom: '5px' }}>
@@ -73,7 +76,7 @@ const SubcategoryManagement: React.FC<SubcategoryManagementProps> = (
         </Grid>
         <Grid item style={{ marginBottom: '20px' }}>
           <Typography variant="h1" color="primary">
-            {props.category.category}
+            {category?.category}
           </Typography>
         </Grid>
         <Grid container direction="row" justify="space-between">
