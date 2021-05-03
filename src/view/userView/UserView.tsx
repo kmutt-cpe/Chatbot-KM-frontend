@@ -1,40 +1,33 @@
 import React from 'react';
-import { Typography, Grid, Link, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
+import { Typography, Grid, Button } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
 import { Color } from '../../assets/css';
+import { users } from './domain/user.mock';
+import { useHistory, useParams } from 'react-router-dom';
 
-interface UserViewProps {
-  user: { id: string; username: string; name: string; role: string };
-}
-
-const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
+const UserView: React.FC = () => {
   const labelWidth = 6;
   const inputWidth = 6;
 
+  const history = useHistory();
+  const { userId } = useParams<{ userId: string }>();
+
+  // todo: Implement get user from backend-api instead
+  const user = users.find((user) => user.id === userId);
+  if (!user) history.push('/user-management');
+
   const [deletePopup, setDeletePopup] = React.useState(false);
 
-  const openDiscardModal = () => {
-    setDeletePopup(true);
-  };
-
-  const closeDiscardModal = () => {
-    setDeletePopup(false);
-  };
-
   const onDiscard = () => {
-    // todo: Implement discard create user
     setDeletePopup(false);
+    history.push('/user-management');
   };
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
-          <Typography color="secondary">
-            <Link href="#" onClick={openDiscardModal}>
-              back
-            </Link>
-          </Typography>
+          <BackButton path="/user-management" />
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
@@ -75,7 +68,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                   height: '100%',
                 }}
               >
-                {props.user.role}
+                {user?.role}
               </Typography>
             </Grid>
           </Grid>
@@ -102,7 +95,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                   height: '100%',
                 }}
               >
-                {props.user.username}
+                {user?.username}
               </Typography>
             </Grid>
           </Grid>
@@ -129,7 +122,7 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
                   height: '100%',
                 }}
               >
-                {props.user.name}
+                {user?.name}
               </Typography>
             </Grid>
           </Grid>
@@ -143,12 +136,23 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
             style={{ marginTop: '20px' }}
           >
             <Grid item>
-              <Button color="primary" variant="contained" type="submit" style={{ width: '100px' }}>
+              <Button
+                color="primary"
+                variant="contained"
+                type="submit"
+                style={{ width: '100px' }}
+                onClick={() => history.push(`/edit-user/${user?.id}`)}
+              >
                 Edit
               </Button>
             </Grid>
             <Grid item>
-              <Button onClick={openDiscardModal} style={{ color: Color.red }}>
+              <Button
+                onClick={() => {
+                  setDeletePopup(true);
+                }}
+                style={{ color: Color.red }}
+              >
                 Delete
               </Button>
             </Grid>
@@ -157,10 +161,14 @@ const UserView: React.FC<UserViewProps> = (props: UserViewProps) => {
       </Grid>
       <ConfirmModal
         onAction={onDiscard}
-        onReject={closeDiscardModal}
-        onClose={closeDiscardModal}
+        onReject={() => {
+          setDeletePopup(false);
+        }}
+        onClose={() => {
+          setDeletePopup(false);
+        }}
         dialogTitle={'Delete user?'}
-        dialogContent={`Are you sure you want to delete ${props.user.username}?`}
+        dialogContent={`Are you sure you want to delete ${user?.username}?`}
         rejectText="Cancel"
         actionText="Delete"
         open={deletePopup}
