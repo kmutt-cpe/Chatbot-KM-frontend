@@ -1,56 +1,33 @@
 import React from 'react';
-import { Typography, Grid, Link, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
+import { Typography, Grid, Button } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
 import { Color } from '../../assets/css';
+import { useHistory, useParams } from 'react-router-dom';
+import { faqs } from './domain/faq.mock';
 
-interface QuestionViewProps {
-  faq: {
-    id: string;
-    question: string;
-    answer: string;
-    subcategory: {
-      id: string;
-      subcategory: string;
-    };
-    category: { id: string; category: string };
-    lastEditor: {
-      id: string;
-      name: string;
-      username: string;
-      role: string;
-    };
-    updatedDate: Date;
-  };
-}
-
-const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => {
+const QuestionView: React.FC = () => {
   const labelWidth = 5;
   const inputWidth = 7;
 
+  const history = useHistory();
+  const { faqId } = useParams<{ faqId: string }>();
+
+  // todo: Implement get faq from backend-api instead
+  const faq = faqs.find((faq) => faq.id === faqId);
+  if (!faq) history.push('/question-management');
+
   const [deletePopup, setDeletePopup] = React.useState(false);
 
-  const openDiscardModal = () => {
-    setDeletePopup(true);
-  };
-
-  const closeDiscardModal = () => {
-    setDeletePopup(false);
-  };
-
   const onDiscard = () => {
-    // todo: Implement discard create user
     setDeletePopup(false);
+    history.goBack();
   };
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
-          <Typography color="secondary">
-            <Link href="#" onClick={openDiscardModal}>
-              back
-            </Link>
-          </Typography>
+          <BackButton path={`/question-list/${faq?.category.id}`} />
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
@@ -90,7 +67,7 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
                   height: '100%',
                 }}
               >
-                {props.faq.question}
+                {faq?.question}
               </Typography>
             </Grid>
           </Grid>
@@ -117,7 +94,7 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
                   height: '100%',
                 }}
               >
-                {props.faq.category.category}
+                {faq?.category.category}
               </Typography>
             </Grid>
           </Grid>
@@ -144,7 +121,7 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
                   height: '100%',
                 }}
               >
-                {props.faq.subcategory.subcategory}
+                {faq?.subcategory.subcategory}
               </Typography>
             </Grid>
           </Grid>
@@ -171,7 +148,7 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
                   height: '100%',
                 }}
               >
-                {props.faq.lastEditor.name}
+                {faq?.lastEditor.name}
               </Typography>
             </Grid>
           </Grid>
@@ -198,7 +175,7 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
                   height: '100%',
                 }}
               >
-                {`${props.faq.updatedDate.getDate()}/${props.faq.updatedDate.getMonth()}/${props.faq.updatedDate.getFullYear()}`}
+                {`${faq?.updatedDate.getDate()}/${faq?.updatedDate.getMonth()}/${faq?.updatedDate.getFullYear()}`}
               </Typography>
             </Grid>
           </Grid>
@@ -225,7 +202,7 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
                   height: '100%',
                 }}
               >
-                {props.faq.answer}
+                {faq?.answer}
               </Typography>
             </Grid>
           </Grid>
@@ -239,12 +216,25 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
             style={{ marginTop: '20px' }}
           >
             <Grid item>
-              <Button color="primary" variant="contained" type="submit" style={{ width: '100px' }}>
+              <Button
+                color="primary"
+                variant="contained"
+                type="submit"
+                style={{ width: '100px' }}
+                onClick={() => {
+                  history.push(`/edit-question/${faqId}`);
+                }}
+              >
                 Edit
               </Button>
             </Grid>
             <Grid item>
-              <Button onClick={openDiscardModal} style={{ color: Color.red }}>
+              <Button
+                onClick={() => {
+                  setDeletePopup(true);
+                }}
+                style={{ color: Color.red }}
+              >
                 Delete
               </Button>
             </Grid>
@@ -253,10 +243,10 @@ const QuestionView: React.FC<QuestionViewProps> = (props: QuestionViewProps) => 
       </Grid>
       <ConfirmModal
         onAction={onDiscard}
-        onReject={closeDiscardModal}
-        onClose={closeDiscardModal}
+        onReject={() => setDeletePopup(false)}
+        onClose={() => setDeletePopup(false)}
         dialogTitle={'Delete user?'}
-        dialogContent={`Are you sure you want to delete ${props.faq.question}?`}
+        dialogContent={`Are you sure you want to delete ${faq?.question}?`}
         rejectText="Cancel"
         actionText="Delete"
         open={deletePopup}
