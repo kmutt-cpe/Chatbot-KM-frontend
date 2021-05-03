@@ -3,10 +3,10 @@ export const faq = {
   question: 'question numba 1',
   answer: 'answer numba 1',
   subcategory: {
-    id: 'subcat-01',
+    id: 'subcategory-02',
     subcategory: '2B-KMUTT',
   },
-  category: { id: 'cat-01', category: 'Admission' },
+  category: { id: 'category-01', category: 'Admission' },
   lastEditor: {
     id: 'user-01',
     name: 'Nathaphop Sundarabhogin',
