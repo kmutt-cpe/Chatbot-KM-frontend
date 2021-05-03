@@ -3,22 +3,23 @@ import {
   Typography,
   Grid,
   TextField,
-  Link,
   Button,
   Select,
   MenuItem,
   InputLabel,
   FormControl,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { QuestionType } from './utils/QuestionType';
 import { ValidateQuestionForm } from './utils/ValidateQuestionForm';
-import { categories } from './domain/category';
-import { subcategories } from './domain/subcategory';
+import { categories } from './domain/category.mock';
+import { subcategories } from './domain/subcategory.mock';
+import { useHistory } from 'react-router-dom';
 
 const CreateQuestion: React.FC = () => {
+  const history = useHistory();
   const labelWidth = 3;
   const inputWidth = 9;
 
@@ -28,8 +29,8 @@ const CreateQuestion: React.FC = () => {
   const [, setSubcategoryId] = React.useState('');
 
   const onDiscard = () => {
-    // todo: Implement discard create user
     setDiscardDisplay(false);
+    history.push('/question-management');
   };
 
   const formikUser = useFormik<QuestionType>({
@@ -42,6 +43,7 @@ const CreateQuestion: React.FC = () => {
     validate: ValidateQuestionForm,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
+      history.push('/question-management');
     },
   });
 
@@ -49,11 +51,7 @@ const CreateQuestion: React.FC = () => {
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
-          <Typography color="secondary">
-            <Link href="#" onClick={() => setDiscardDisplay(true)}>
-              back
-            </Link>
-          </Typography>
+          <BackButton onClick={() => setDiscardDisplay(true)} />
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">

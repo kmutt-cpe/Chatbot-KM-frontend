@@ -3,65 +3,55 @@ import {
   Typography,
   Grid,
   TextField,
-  Link,
   Button,
   Select,
   MenuItem,
   InputLabel,
   FormControl,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { QuestionType } from './utils/QuestionType';
 import { ValidateQuestionForm } from './utils/ValidateQuestionForm';
-import { categories } from './domain/category';
-import { subcategories } from './domain/subcategory';
+import { categories } from './domain/category.mock';
+import { subcategories } from './domain/subcategory.mock';
+import { useHistory, useParams } from 'react-router-dom';
+import { faqs } from './domain/faq.mock';
 
-interface EditQuestionProps {
-  faq: {
-    id: string;
-    question: string;
-    answer: string;
-    subcategory: {
-      id: string;
-      subcategory: string;
-    };
-    category: { id: string; category: string };
-    lastEditor: {
-      id: string;
-      name: string;
-      username: string;
-      role: string;
-    };
-    updatedDate: Date;
-  };
-}
-
-const EditQuestion: React.FC<EditQuestionProps> = (props: EditQuestionProps) => {
+const EditQuestion: React.FC = () => {
   const labelWidth = 3;
   const inputWidth = 9;
 
-  const [discardDisplay, setDiscardDisplay] = React.useState(false);
-  const [categoryId, setCategoryId] = React.useState(props.faq.category.id);
+  const history = useHistory();
+  const { faqId } = useParams<{ faqId: string }>();
 
-  const [, setSubcategoryId] = React.useState(props.faq.subcategory.id);
+  // todo: Implement get faq from backend-api instead
+  const faq = faqs.find((faq) => faq.id === faqId);
+  if (!faq) history.push('/question-management');
+
+  const [discardDisplay, setDiscardDisplay] = React.useState(false);
+  const [categoryId, setCategoryId] = React.useState(faq?.category.id);
+
+  const [, setSubcategoryId] = React.useState(faq?.subcategory.id);
 
   const onDiscard = () => {
-    // todo: Implement discard create user
     setDiscardDisplay(false);
+    history.goBack();
   };
 
   const formikUser = useFormik<QuestionType>({
     initialValues: {
-      question: props.faq.question,
-      answer: props.faq.answer,
-      subcategoryId: props.faq.subcategory.id,
-      categoryId: props.faq.category.id,
+      // todo: Remove empty string
+      question: faq?.question || '',
+      answer: faq?.answer || '',
+      subcategoryId: faq?.subcategory.id || '',
+      categoryId: faq?.category.id || '',
     },
     validate: ValidateQuestionForm,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
+      history.goBack();
     },
   });
 
@@ -70,9 +60,7 @@ const EditQuestion: React.FC<EditQuestionProps> = (props: EditQuestionProps) => 
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
           <Typography color="secondary">
-            <Link href="#" onClick={() => setDiscardDisplay(true)}>
-              back
-            </Link>
+            <BackButton onClick={() => setDiscardDisplay(true)} />
           </Typography>
         </Grid>
         <Grid item style={{ height: '50px' }}>
