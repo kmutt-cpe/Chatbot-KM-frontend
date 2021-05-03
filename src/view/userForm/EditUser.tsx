@@ -1,36 +1,41 @@
 import React from 'react';
-import { Typography, Grid, TextField, Link, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
+import { Typography, Grid, TextField, Button } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { EditUserType } from './utils/UserType';
 import { ValidateEditUserForm } from './utils/ValidateUserForm';
 import ChangePassword from './assets/ChangePassword';
+import { useHistory, useParams } from 'react-router-dom';
+import { users } from './domain/user.mock';
 
-interface EditUserProps {
-  user: { id: string; username: string; name: string };
-}
-
-const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
+const EditUser: React.FC = () => {
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
   const [changePasswordState, setChangePasswordState] = React.useState(false);
   const labelWidth = 3;
   const inputWidth = 9;
+  const history = useHistory();
+  const { userId } = useParams<{ userId: string }>();
+
+  // todo: Implement get user from backend-api instead
+  const user = users.find((user) => user.id === userId);
+  if (!user) history.push('/user-management');
 
   const onDiscard = () => {
-    // todo: Implement discard create user
-    if (changePasswordState === true) setChangePasswordState(false);
     setDiscardDisplay(false);
+    history.goBack();
   };
 
   const formikUser = useFormik<EditUserType>({
     initialValues: {
-      username: props.user.username,
-      name: props.user.name,
+      // todo: remove empty string
+      username: user?.username || '',
+      name: user?.name || '',
     },
     validate: ValidateEditUserForm,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
+      history.goBack();
     },
   });
 
@@ -38,11 +43,11 @@ const EditUser: React.FC<EditUserProps> = (props: EditUserProps) => {
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
-          <Typography color="secondary">
-            <Link href="#" onClick={() => setDiscardDisplay(true)}>
-              back
-            </Link>
-          </Typography>
+          <BackButton
+            onClick={() => {
+              setDiscardDisplay(true);
+            }}
+          />
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">

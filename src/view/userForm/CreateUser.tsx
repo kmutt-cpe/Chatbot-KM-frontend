@@ -1,28 +1,22 @@
 import React from 'react';
-import { Typography, Grid, TextField, Link, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal } from '../../component';
+import { Typography, Grid, TextField, Button } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { CreateUserType } from './utils/UserType';
 import { ValidateCreateUserForm } from './utils/ValidateUserForm';
+import { useHistory } from 'react-router-dom';
 
 const CreateUser: React.FC = () => {
   const labelWidth = 3;
   const inputWidth = 9;
+  const history = useHistory();
 
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
 
-  const openDiscardModal = () => {
-    setDiscardDisplay(true);
-  };
-
-  const closeDiscardModal = () => {
-    setDiscardDisplay(false);
-  };
-
   const onDiscard = () => {
-    // todo: Implement discard create user
     setDiscardDisplay(false);
+    history.push('/user-management');
   };
 
   const formik = useFormik<CreateUserType>({
@@ -35,6 +29,7 @@ const CreateUser: React.FC = () => {
     validate: ValidateCreateUserForm,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
+      history.push('/user-management');
     },
   });
 
@@ -42,11 +37,11 @@ const CreateUser: React.FC = () => {
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
-          <Typography color="secondary">
-            <Link href="#" onClick={openDiscardModal}>
-              back
-            </Link>
-          </Typography>
+          <BackButton
+            onClick={() => {
+              setDiscardDisplay(true);
+            }}
+          />
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
@@ -168,7 +163,12 @@ const CreateUser: React.FC = () => {
             </Grid>
             <Grid item container direction="row" spacing={2} justify="flex-end">
               <Grid item>
-                <Button color="primary" onClick={openDiscardModal}>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    setDiscardDisplay(true);
+                  }}
+                >
                   Cancel
                 </Button>
               </Grid>
@@ -183,8 +183,12 @@ const CreateUser: React.FC = () => {
       </Grid>
       <ConfirmModal
         onAction={onDiscard}
-        onReject={closeDiscardModal}
-        onClose={closeDiscardModal}
+        onReject={() => {
+          setDiscardDisplay(false);
+        }}
+        onClose={() => {
+          setDiscardDisplay(false);
+        }}
         dialogTitle={'Discard changes?'}
         dialogContent={'Are you sure you want to discard?'}
         rejectText="Cancel"
