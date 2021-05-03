@@ -7,6 +7,9 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { AuthActionType } from '../../redux/auth/auth.type';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,6 +26,8 @@ export default function UserMenu(): React.ReactElement {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -33,6 +38,12 @@ export default function UserMenu(): React.ReactElement {
       return;
     }
 
+    setOpen(false);
+  };
+
+  const handleLogout = () => {
+    dispatch({ type: AuthActionType.REMOVE_AUTH });
+    history.push('/');
     setOpen(false);
   };
 
@@ -77,7 +88,7 @@ export default function UserMenu(): React.ReactElement {
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                     <MenuItem onClick={handleClose}>Edit Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

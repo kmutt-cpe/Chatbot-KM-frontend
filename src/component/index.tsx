@@ -7,3 +7,4 @@ export { default as ConfirmModal } from './confirmModal/ConfirmModal';
 export { default as InputModal } from './inputModal/InputModal';
 export { default as CustomCard } from './customCard/CustomCard';
 export { default as AlertModal } from './alertModal/AlertModal';
+export { default as BackButton } from './backButton/BackButton';
