@@ -2,8 +2,10 @@ import React, { ReactElement } from 'react';
 import { Box, Button, Toolbar, AppBar, Link } from '@material-ui/core';
 import { LogoImg } from '../../assets/img';
 import { Color } from '../../assets/css';
+import { useHistory } from 'react-router-dom';
 
 const LandingNavbar = (): ReactElement => {
+  const history = useHistory();
   return (
     <AppBar
       position="static"
@@ -24,19 +26,19 @@ const LandingNavbar = (): ReactElement => {
           <Box flexGrow={1} />
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box mr={2.5} my={0.5}>
-              <Link href="/">
+              <Button color="primary" onClick={() => history.push('/')}>
                 <div style={{ color: Color.secondary }}>HOME</div>
-              </Link>
+              </Button>
             </Box>
             <Box mr={2.5} my={0.5}>
-              <div style={{ color: Color.secondary }}>CONTACT</div>
+              <Button color="primary" onClick={() => history.push('/contact')}>
+                <div style={{ color: Color.secondary }}>CONTACT</div>
+              </Button>
             </Box>
             <Box mr={2.5} my={0.5}>
-              <Link href="/sign-in">
-                <Button variant="contained" color="primary">
-                  Sign in
-                </Button>
-              </Link>
+              <Button variant="contained" color="primary" onClick={() => history.push('/sign-in')}>
+                Sign in
+              </Button>
             </Box>
           </Box>
         </Box>
