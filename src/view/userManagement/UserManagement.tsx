@@ -15,7 +15,7 @@ import {
   Button,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
-import { users } from './domain/user';
+import { users } from './domain/user.mock';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -23,6 +23,7 @@ import DeleteCategory from './assets/DeleteUser';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import { IconButton } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -40,18 +41,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const UserManagement: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
-  const onClickCreateUser = () => {
-    // todo: Implement create user
-  };
-
-  const onClickEditUser = () => {
-    // todo: Implement edit user
-  };
-
-  const onClickViewUser = (user: { id: string; username: string; name: string; role: string }) => {
-    // todo: Implement view user
-    alert(user);
-  };
+  const history = useHistory();
 
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
@@ -92,7 +82,7 @@ const UserManagement: React.FC = () => {
               color="primary"
               variant="contained"
               style={{ fontSize: '12px' }}
-              onClick={onClickCreateUser}
+              onClick={() => history.push('/create-user')}
             >
               CREATE USER
             </Button>
@@ -133,7 +123,7 @@ const UserManagement: React.FC = () => {
                         scope="row"
                         align="center"
                         style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => onClickViewUser(user)}
+                        onClick={() => history.push(`/user-view/${user.id}`)}
                       >
                         {user.role}
                       </TableCell>
@@ -142,7 +132,7 @@ const UserManagement: React.FC = () => {
                         scope="row"
                         align="center"
                         style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => onClickViewUser(user)}
+                        onClick={() => history.push(`/user-view/${user.id}`)}
                       >
                         {user.username}
                       </TableCell>
@@ -151,14 +141,17 @@ const UserManagement: React.FC = () => {
                         scope="row"
                         align="center"
                         style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => onClickViewUser(user)}
+                        onClick={() => history.push(`/user-view/${user.id}`)}
                       >
                         {user.name}
                       </TableCell>
                       <TableCell component="th" scope="row" align="center">
                         <Box display="flex" flexDirection="row" justifyContent="center">
                           <Box mr={1}>
-                            <IconButton onClick={onClickEditUser} size="small">
+                            <IconButton
+                              onClick={() => history.push(`/edit-user/${user.id}`)}
+                              size="small"
+                            >
                               <EditRoundedIcon style={{ color: Color.secondary }} />
                             </IconButton>
                           </Box>

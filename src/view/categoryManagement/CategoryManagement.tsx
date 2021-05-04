@@ -14,7 +14,7 @@ import {
   Box,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
-import { categories } from './domain/category';
+import { categories } from './domain/category.mock';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -22,6 +22,7 @@ import DeleteCategory from './assets/DeleteCategory';
 import CreateCategory from './assets/CreateCategory';
 import EditCategory from './assets/EditCategory';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import { useHistory } from 'react-router-dom';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -39,8 +40,10 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const CategoryManagement: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
-  const onClickCategory = () => {
-    // todo: Implement changing category management
+  const history = useHistory();
+
+  const onClickCategory = (categoryId: string) => {
+    history.push(`/subcategory-management/${categoryId}`);
   };
 
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -109,10 +112,10 @@ const CategoryManagement: React.FC = () => {
                           component="th"
                           scope="row"
                           align="center"
-                          onClick={onClickCategory}
+                          onClick={() => onClickCategory(category.id)}
                           style={{ ...borderColumn, cursor: 'pointer' }}
                         >
-                          {category.category}
+                          {category?.category}
                         </TableCell>
                         <TableCell component="th" scope="row" align="center">
                           <Box display="flex" flexDirection="row" justifyContent="center">

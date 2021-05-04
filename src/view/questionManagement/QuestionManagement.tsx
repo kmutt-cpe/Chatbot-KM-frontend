@@ -10,10 +10,13 @@ import {
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
 import CategoryCard from './assets/CategoryCard';
-import { categories } from './domain/category';
+import { categories } from './domain/category.mock';
 import SearchIcon from '@material-ui/icons/Search';
+import { useHistory } from 'react-router-dom';
 
-const questionManagement: React.FC = () => {
+const QuestionManagement: React.FC = () => {
+  const history = useHistory();
+
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
@@ -37,7 +40,12 @@ const questionManagement: React.FC = () => {
             />
           </Grid>
           <Grid xs={2} item>
-            <Button color="primary" variant="contained" style={{ fontSize: '12px' }}>
+            <Button
+              color="primary"
+              variant="contained"
+              style={{ fontSize: '12px' }}
+              onClick={() => history.push('/create-question')}
+            >
               CREATE QUESTION
             </Button>
           </Grid>
@@ -45,7 +53,11 @@ const questionManagement: React.FC = () => {
         <GridList cellHeight={200} cols={4}>
           {categories.map((category) => (
             <GridListTile key={category.id}>
-              <CategoryCard {...category} key={category.id} />
+              <CategoryCard
+                {...category}
+                key={category.id}
+                onClick={() => history.push(`/question-list/${category.id}`)}
+              />
             </GridListTile>
           ))}
         </GridList>
@@ -54,4 +66,4 @@ const questionManagement: React.FC = () => {
   );
 };
 
-export default questionManagement;
+export default QuestionManagement;

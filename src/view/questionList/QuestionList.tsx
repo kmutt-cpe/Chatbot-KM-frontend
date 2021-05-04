@@ -14,8 +14,7 @@ import {
   Box,
   Button,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout } from '../../component';
-import { questions } from './domain/question';
+import { StaffNavbar, BasicLayout, BackButton } from '../../component';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -23,6 +22,9 @@ import DeleteQuestion from './assets/DeleteQuestion';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import { IconButton } from '@material-ui/core';
+import { useHistory, useParams } from 'react-router-dom';
+import { faqs as faqDB } from './domain/faq.mock';
+import { categories } from './domain/category.mock';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -37,19 +39,20 @@ const StyledTableRow = withStyles((theme: Theme) =>
   })
 )(TableRow);
 
-interface QuestionListProps {
-  category: {
-    id: string;
-    category: string;
-  };
-}
-
-const QuestionList: React.FC<QuestionListProps> = (props: QuestionListProps) => {
+const QuestionList: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
 
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
+
+  const history = useHistory();
+  const { categoryId } = useParams<{ categoryId: string }>();
+
+  // todo: Get category and faq from backend-api instead
+  const category = categories.find((category) => category.id === categoryId);
+  if (!category) history.push('/question-management');
+  const faqs = faqDB.filter((faq) => faq.category.id === categoryId);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -60,19 +63,11 @@ const QuestionList: React.FC<QuestionListProps> = (props: QuestionListProps) => 
     setPage(0);
   };
 
-  const onClickCreateQuestion = () => {
-    // todo: Implement redirect to create question page
-  };
-
-  const onClickEditQuestion = () => {
-    // todo: Implement redirect to edit question page
-  };
-
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
         <Grid item style={{ marginBottom: '20px' }}>
-          <Typography color="secondary">back</Typography>
+          <BackButton path="/question-management" />
         </Grid>
         <Grid item>
           <Typography variant="h2" color="primary" style={{ marginBottom: '5px' }}>
@@ -81,7 +76,7 @@ const QuestionList: React.FC<QuestionListProps> = (props: QuestionListProps) => 
         </Grid>
         <Grid item style={{ marginBottom: '20px' }}>
           <Typography variant="h1" color="primary">
-            {props.category.category}
+            {category?.category}
           </Typography>
         </Grid>
         <Grid container direction="row" justify="center" spacing={2}>
@@ -103,7 +98,7 @@ const QuestionList: React.FC<QuestionListProps> = (props: QuestionListProps) => 
               color="primary"
               variant="contained"
               style={{ fontSize: '12px' }}
-              onClick={onClickCreateQuestion}
+              onClick={() => history.push('/create-question')}
             >
               CREATE QUESTION
             </Button>
@@ -131,44 +126,47 @@ const QuestionList: React.FC<QuestionListProps> = (props: QuestionListProps) => 
               </TableRow>
             </TableHead>
             <TableBody>
-              {questions
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((question) => {
-                  return (
-                    <>
-                      <StyledTableRow hover key={question.id}>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          align="center"
-                          style={{ ...borderColumn }}
-                        >
-                          {question.subcategory.subcategory}
-                        </TableCell>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          align="center"
-                          style={{ ...borderColumn }}
-                        >
-                          {question.question}
-                        </TableCell>
-                        <TableCell component="th" scope="row" align="center">
-                          <Box display="flex" flexDirection="row" justifyContent="center">
-                            <Box mr={1}>
-                              <IconButton onClick={onClickEditQuestion} size="small">
-                                <EditRoundedIcon style={{ color: Color.secondary }} />
-                              </IconButton>
-                            </Box>
-                            <Box mr={1}>
-                              <DeleteQuestion id={question.id} question={question.question} />
-                            </Box>
+              {faqs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((question) => {
+                return (
+                  <>
+                    <StyledTableRow hover key={question.id}>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        align="center"
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => history.push(`/question-view/${question.id}`)}
+                      >
+                        {question.subcategory.subcategory}
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        align="center"
+                        style={{ ...borderColumn, cursor: 'pointer' }}
+                        onClick={() => history.push(`/question-view/${question.id}`)}
+                      >
+                        {question.question}
+                      </TableCell>
+                      <TableCell component="th" scope="row" align="center">
+                        <Box display="flex" flexDirection="row" justifyContent="center">
+                          <Box mr={1}>
+                            <IconButton
+                              onClick={() => history.push(`/edit-question/${question.id}`)}
+                              size="small"
+                            >
+                              <EditRoundedIcon style={{ color: Color.secondary }} />
+                            </IconButton>
                           </Box>
-                        </TableCell>
-                      </StyledTableRow>
-                    </>
-                  );
-                })}
+                          <Box mr={1}>
+                            <DeleteQuestion id={question.id} question={question.question} />
+                          </Box>
+                        </Box>
+                      </TableCell>
+                    </StyledTableRow>
+                  </>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
@@ -176,7 +174,7 @@ const QuestionList: React.FC<QuestionListProps> = (props: QuestionListProps) => 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 100]}
             component="div"
-            count={questions.length}
+            count={faqs.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onChangePage={handleChangePage}

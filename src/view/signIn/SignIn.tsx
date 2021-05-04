@@ -6,8 +6,19 @@ import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { SignInType } from './utils/SignInType';
 import { ValidateSignInForm } from './utils/ValidateSignInForm';
+import { useDispatch } from 'react-redux';
+import { AuthActionType } from '../../redux/auth/auth.type';
+import { useHistory } from 'react-router-dom';
+
+const mockUser = [
+  { id: 'user-01', username: 'tkntp123', password: '123456aA', role: 'admin' },
+  { id: 'user-02', username: 'admin123', password: '123456aA', role: 'admin' },
+];
 
 const SignIn = (): React.ReactElement => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const formik = useFormik<SignInType>({
     initialValues: {
       username: '',
@@ -15,7 +26,11 @@ const SignIn = (): React.ReactElement => {
     },
     validate: ValidateSignInForm,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      const user = mockUser.find((user) => user.username === values.username);
+      if (user?.password === values.password) {
+        dispatch({ type: AuthActionType.SET_AUTH, authData: { ...user, token: 'tokennaja' } });
+        history.push('/question-management');
+      }
     },
   });
 

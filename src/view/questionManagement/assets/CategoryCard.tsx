@@ -1,17 +1,15 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { CustomCard } from '../../../component';
 
 interface CategoryCardInterface {
   id: string;
   category?: string;
+  onClick?: () => void;
 }
 
 const CategoryCard: React.FC<CategoryCardInterface> = (props: CategoryCardInterface) => {
-  const onClick = () => {
-    // todo: Add onClick to see in each question
-  };
-
-  return <CustomCard onClick={onClick} text={props.category} />;
+  return <CustomCard onClick={props.onClick} text={props.category} />;
 };
 
 export default CategoryCard;
