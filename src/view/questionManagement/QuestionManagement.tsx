@@ -17,6 +17,8 @@ import { useHistory } from 'react-router-dom';
 const QuestionManagement: React.FC = () => {
   const history = useHistory();
 
+  const [searchText, setSearchText] = React.useState('');
+
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
@@ -30,6 +32,10 @@ const QuestionManagement: React.FC = () => {
             <TextField
               style={{ width: '100%' }}
               placeholder="Search…"
+              value={searchText}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchText(event.target.value)
+              }
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -51,15 +57,20 @@ const QuestionManagement: React.FC = () => {
           </Grid>
         </Grid>
         <GridList cellHeight={200} cols={4}>
-          {categories.map((category) => (
-            <GridListTile key={category.id}>
-              <CategoryCard
-                {...category}
-                key={category.id}
-                onClick={() => history.push(`/question-list/${category.id}`)}
-              />
-            </GridListTile>
-          ))}
+          {categories
+            .filter((category) => {
+              const categoryStr = category.category.toLowerCase();
+              return categoryStr.includes(searchText.toLowerCase());
+            })
+            .map((category) => (
+              <GridListTile key={category.id}>
+                <CategoryCard
+                  {...category}
+                  key={category.id}
+                  onClick={() => history.push(`/question-list/${category.id}`)}
+                />
+              </GridListTile>
+            ))}
         </GridList>
       </Grid>
     </BasicLayout>

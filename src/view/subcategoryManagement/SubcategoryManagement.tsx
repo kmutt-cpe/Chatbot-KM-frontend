@@ -43,6 +43,7 @@ const SubcategoryManagement: React.FC = () => {
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
+  const [searchText, setSearchText] = React.useState('');
 
   const history = useHistory();
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -91,6 +92,9 @@ const SubcategoryManagement: React.FC = () => {
                   </InputAdornment>
                 ),
               }}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchText(event.target.value)
+              }
             />
           </Grid>
           <Grid item container xs={3} justify="flex-end">
@@ -116,6 +120,10 @@ const SubcategoryManagement: React.FC = () => {
             </TableHead>
             <TableBody>
               {subcategories
+                .filter((subcategory) => {
+                  const subcategoryStr = subcategory.subcategory.toLowerCase();
+                  return subcategoryStr.includes(searchText.toLowerCase());
+                })
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((subcategory) => {
                   return (

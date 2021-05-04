@@ -41,6 +41,7 @@ const CategoryManagement: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
   const history = useHistory();
+  const [searchText, setSearchText] = React.useState('');
 
   const onClickCategory = (categoryId: string) => {
     history.push(`/subcategory-management/${categoryId}`);
@@ -78,6 +79,9 @@ const CategoryManagement: React.FC = () => {
                   </InputAdornment>
                 ),
               }}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchText(event.target.value)
+              }
             />
           </Grid>
           <Grid xs={2} item>
@@ -103,6 +107,10 @@ const CategoryManagement: React.FC = () => {
             </TableHead>
             <TableBody>
               {categories
+                .filter((category) => {
+                  const categoryStr = category.category.toLowerCase();
+                  return categoryStr.includes(searchText.toLowerCase());
+                })
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((category) => {
                   return (

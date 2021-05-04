@@ -42,7 +42,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const QuestionList: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
-
+  const [searchText, setSearchText] = React.useState('');
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
 
@@ -91,6 +91,9 @@ const QuestionList: React.FC = () => {
                   </InputAdornment>
                 ),
               }}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchText(event.target.value)
+              }
             />
           </Grid>
           <Grid xs={2} item>
@@ -126,47 +129,55 @@ const QuestionList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {faqs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((question) => {
-                return (
-                  <>
-                    <StyledTableRow hover key={question.id}>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        align="center"
-                        style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => history.push(`/question-view/${question.id}`)}
-                      >
-                        {question.subcategory.subcategory}
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        align="center"
-                        style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => history.push(`/question-view/${question.id}`)}
-                      >
-                        {question.question}
-                      </TableCell>
-                      <TableCell component="th" scope="row" align="center">
-                        <Box display="flex" flexDirection="row" justifyContent="center">
-                          <Box mr={1}>
-                            <IconButton
-                              onClick={() => history.push(`/edit-question/${question.id}`)}
-                              size="small"
-                            >
-                              <EditRoundedIcon style={{ color: Color.secondary }} />
-                            </IconButton>
+              {faqs
+                .filter((faq) => {
+                  const query = searchText.toLowerCase();
+                  const subcategory = faq.subcategory.subcategory.toLowerCase();
+                  const question = faq.question.toLowerCase();
+                  return subcategory.includes(query) || question.includes(query);
+                })
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((question) => {
+                  return (
+                    <>
+                      <StyledTableRow hover key={question.id}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          align="center"
+                          style={{ ...borderColumn, cursor: 'pointer' }}
+                          onClick={() => history.push(`/question-view/${question.id}`)}
+                        >
+                          {question.subcategory.subcategory}
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          align="center"
+                          style={{ ...borderColumn, cursor: 'pointer' }}
+                          onClick={() => history.push(`/question-view/${question.id}`)}
+                        >
+                          {question.question}
+                        </TableCell>
+                        <TableCell component="th" scope="row" align="center">
+                          <Box display="flex" flexDirection="row" justifyContent="center">
+                            <Box mr={1}>
+                              <IconButton
+                                onClick={() => history.push(`/edit-question/${question.id}`)}
+                                size="small"
+                              >
+                                <EditRoundedIcon style={{ color: Color.secondary }} />
+                              </IconButton>
+                            </Box>
+                            <Box mr={1}>
+                              <DeleteQuestion id={question.id} question={question.question} />
+                            </Box>
                           </Box>
-                          <Box mr={1}>
-                            <DeleteQuestion id={question.id} question={question.question} />
-                          </Box>
-                        </Box>
-                      </TableCell>
-                    </StyledTableRow>
-                  </>
-                );
-              })}
+                        </TableCell>
+                      </StyledTableRow>
+                    </>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>

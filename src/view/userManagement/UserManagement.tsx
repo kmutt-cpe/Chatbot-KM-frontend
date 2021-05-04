@@ -42,6 +42,7 @@ const UserManagement: React.FC = () => {
   const tableHeadStyle: CSSProperties = { color: Color.white, fontWeight: 'bold' };
   const borderColumn: CSSProperties = { borderRight: '3px solid #ffffff' };
   const history = useHistory();
+  const [searchText, setSearchText] = React.useState('');
 
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
@@ -75,6 +76,9 @@ const UserManagement: React.FC = () => {
                   </InputAdornment>
                 ),
               }}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchText(event.target.value)
+              }
             />
           </Grid>
           <Grid item container xs={2} justify="flex-end">
@@ -114,60 +118,69 @@ const UserManagement: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => {
-                return (
-                  <>
-                    <StyledTableRow hover key={user.id}>
-                      <TableCell
-                        component="td"
-                        scope="row"
-                        align="center"
-                        style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => history.push(`/user-view/${user.id}`)}
-                      >
-                        {user.role}
-                      </TableCell>
-                      <TableCell
-                        component="td"
-                        scope="row"
-                        align="center"
-                        style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => history.push(`/user-view/${user.id}`)}
-                      >
-                        {user.username}
-                      </TableCell>
-                      <TableCell
-                        component="td"
-                        scope="row"
-                        align="center"
-                        style={{ ...borderColumn, cursor: 'pointer' }}
-                        onClick={() => history.push(`/user-view/${user.id}`)}
-                      >
-                        {user.name}
-                      </TableCell>
-                      <TableCell component="th" scope="row" align="center">
-                        <Box display="flex" flexDirection="row" justifyContent="center">
-                          <Box mr={1}>
-                            <IconButton
-                              onClick={() => history.push(`/edit-user/${user.id}`)}
-                              size="small"
-                            >
-                              <EditRoundedIcon style={{ color: Color.secondary }} />
-                            </IconButton>
+              {users
+                .filter((user) => {
+                  const query = searchText.toLowerCase();
+                  const roleState = user.role.toLowerCase().includes(query);
+                  const usernameState = user.username.toLowerCase().includes(query);
+                  const nameState = user.name.toLowerCase().includes(query);
+                  return roleState || usernameState || nameState;
+                })
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((user) => {
+                  return (
+                    <>
+                      <StyledTableRow hover key={user.id}>
+                        <TableCell
+                          component="td"
+                          scope="row"
+                          align="center"
+                          style={{ ...borderColumn, cursor: 'pointer' }}
+                          onClick={() => history.push(`/user-view/${user.id}`)}
+                        >
+                          {user.role}
+                        </TableCell>
+                        <TableCell
+                          component="td"
+                          scope="row"
+                          align="center"
+                          style={{ ...borderColumn, cursor: 'pointer' }}
+                          onClick={() => history.push(`/user-view/${user.id}`)}
+                        >
+                          {user.username}
+                        </TableCell>
+                        <TableCell
+                          component="td"
+                          scope="row"
+                          align="center"
+                          style={{ ...borderColumn, cursor: 'pointer' }}
+                          onClick={() => history.push(`/user-view/${user.id}`)}
+                        >
+                          {user.name}
+                        </TableCell>
+                        <TableCell component="th" scope="row" align="center">
+                          <Box display="flex" flexDirection="row" justifyContent="center">
+                            <Box mr={1}>
+                              <IconButton
+                                onClick={() => history.push(`/edit-user/${user.id}`)}
+                                size="small"
+                              >
+                                <EditRoundedIcon style={{ color: Color.secondary }} />
+                              </IconButton>
+                            </Box>
+                            <Box mr={1}>
+                              <DeleteCategory
+                                id={user.id}
+                                username={user.username}
+                                name={user.name}
+                              />
+                            </Box>
                           </Box>
-                          <Box mr={1}>
-                            <DeleteCategory
-                              id={user.id}
-                              username={user.username}
-                              name={user.name}
-                            />
-                          </Box>
-                        </Box>
-                      </TableCell>
-                    </StyledTableRow>
-                  </>
-                );
-              })}
+                        </TableCell>
+                      </StyledTableRow>
+                    </>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>
