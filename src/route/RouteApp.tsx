@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import Loadable from 'react-loadable';
@@ -65,6 +65,10 @@ const UserView = Loadable({
   loader: () => import('../view/userView/UserView'),
   loading: () => <CircularProgress />,
 });
+const Contact = Loadable({
+  loader: () => import('../view/contact/Contact'),
+  loading: () => <CircularProgress />,
+});
 
 export const RouteApp: React.FC = (): React.ReactElement => {
   const history = createBrowserHistory();
@@ -73,6 +77,7 @@ export const RouteApp: React.FC = (): React.ReactElement => {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/sign-in" component={SignIn} />
+        <Route exact path="/contact/" component={Contact} />
         <PrivateRoute exact path="/question-management" component={QuestionManagement} />
         <PrivateRoute exact path="/question-list/:categoryId" component={QuestionList} />
         <PrivateRoute exact path="/question-view/:faqId" component={QuestionView} />
