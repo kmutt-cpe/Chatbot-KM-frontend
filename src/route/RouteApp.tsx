@@ -65,6 +65,10 @@ const UserView = Loadable({
   loader: () => import('../view/userView/UserView'),
   loading: () => <CircularProgress />,
 });
+const EditProfile = Loadable({
+  loader: () => import('../view/userForm/EditProfile'),
+  loading: () => <CircularProgress />,
+});
 const Contact = Loadable({
   loader: () => import('../view/contact/Contact'),
   loading: () => <CircularProgress />,
@@ -93,6 +97,7 @@ export const RouteApp: React.FC = (): React.ReactElement => {
         <PrivateRoute exact path="/create-user" component={CreateUser} />
         <PrivateRoute exact path="/edit-user/:userId" component={EditUser} />
         <PrivateRoute exact path="/user-view/:userId" component={UserView} />
+        <PrivateRoute exact path="/edit-profile" component={EditProfile} />
         <Route component={PageNotFound} />
       </Switch>
     </Router>
