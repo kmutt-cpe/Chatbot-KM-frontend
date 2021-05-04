@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'Sukhumvit';
+  font-weight: 900;
+  src: local('Sukhumvit'),
+    url(./assets/css/fonts/Sukhumvit/SukhumvitSet-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 900;
+  src: local('Roboto'), url(./assets/css/fonts/Roboto/Roboto-Medium.ttf) format('truetype');
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Sukhumvit';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}

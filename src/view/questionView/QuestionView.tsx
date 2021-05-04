@@ -1,0 +1,258 @@
+import React from 'react';
+import { Typography, Grid, Button } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
+import { Color } from '../../assets/css';
+import { useHistory, useParams } from 'react-router-dom';
+import { faqs } from './domain/faq.mock';
+
+const QuestionView: React.FC = () => {
+  const labelWidth = 5;
+  const inputWidth = 7;
+
+  const history = useHistory();
+  const { faqId } = useParams<{ faqId: string }>();
+
+  // todo: Implement get faq from backend-api instead
+  const faq = faqs.find((faq) => faq.id === faqId);
+  if (!faq) history.push('/question-management');
+
+  const [deletePopup, setDeletePopup] = React.useState(false);
+
+  const onDiscard = () => {
+    setDeletePopup(false);
+    history.goBack();
+  };
+
+  return (
+    <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
+      <Grid container direction="column" justify="flex-start">
+        <Grid item style={{ marginBottom: '20px' }}>
+          <BackButton path={`/question-list/${faq?.category.id}`} />
+        </Grid>
+        <Grid item style={{ height: '50px' }}>
+          <Typography variant="h1" color="secondary">
+            QUESTION
+          </Typography>
+        </Grid>
+        <Grid
+          item
+          style={{
+            width: '100%',
+            height: '3px',
+            backgroundColor: Color.secondary,
+            marginBottom: '40px',
+          }}
+        />
+        <Grid item container direction="column" spacing={3}>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                คำถาม
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {faq?.question}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                หมวดหมู่
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {faq?.category.category}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                หมวดหมู่ย่อย
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {faq?.subcategory.subcategory}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                ผู้เขียนล่าสุด
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {faq?.lastEditor.name}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                วันที่แก้ไขล่าสุด
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {`${faq?.updatedDate.getDate()}/${faq?.updatedDate.getMonth()}/${faq?.updatedDate.getFullYear()}`}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item container direction="row" spacing={5}>
+            <Grid item xs={labelWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+                color="secondary"
+              >
+                คำตอบ
+              </Typography>
+            </Grid>
+            <Grid item xs={inputWidth}>
+              <Typography
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                {faq?.answer}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            container
+            direction="column"
+            spacing={2}
+            justify="center"
+            alignItems="center"
+            style={{ marginTop: '20px' }}
+          >
+            <Grid item>
+              <Button
+                color="primary"
+                variant="contained"
+                type="submit"
+                style={{ width: '100px' }}
+                onClick={() => {
+                  history.push(`/edit-question/${faqId}`);
+                }}
+              >
+                Edit
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={() => {
+                  setDeletePopup(true);
+                }}
+                style={{ color: Color.red }}
+              >
+                Delete
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <ConfirmModal
+        onAction={onDiscard}
+        onReject={() => setDeletePopup(false)}
+        onClose={() => setDeletePopup(false)}
+        dialogTitle={'Delete user?'}
+        dialogContent={`Are you sure you want to delete ${faq?.question}?`}
+        rejectText="Cancel"
+        actionText="Delete"
+        open={deletePopup}
+      />
+    </BasicLayout>
+  );
+};
+
+export default QuestionView;
