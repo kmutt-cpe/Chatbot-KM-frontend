@@ -111,7 +111,7 @@ const SubcategoryManagement: React.FC = () => {
             <TableHead>
               <TableRow style={{ backgroundColor: Color.blue }}>
                 <TableCell style={{ ...tableHeadStyle, ...borderColumn }} align="center">
-                  Category
+                  Subcategory
                 </TableCell>
                 <TableCell style={tableHeadStyle} align="center">
                   Action

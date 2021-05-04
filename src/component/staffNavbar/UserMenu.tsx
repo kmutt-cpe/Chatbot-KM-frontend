@@ -7,9 +7,10 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { AuthActionType } from '../../redux/auth/auth.type';
+import { RootReducersType } from '../../redux/reducers';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,6 +27,7 @@ export default function UserMenu(): React.ReactElement {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer?.authData);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -38,6 +40,11 @@ export default function UserMenu(): React.ReactElement {
       return;
     }
 
+    setOpen(false);
+  };
+
+  const handleEditProfile = () => {
+    history.push('/edit-profile');
     setOpen(false);
   };
 
@@ -75,8 +82,7 @@ export default function UserMenu(): React.ReactElement {
           variant="contained"
           color="primary"
         >
-          Administrator
-          {/* todo:Changing static administrator to user profile */}
+          {authData?.username}
         </Button>
         <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
           {({ TransitionProps, placement }) => (
@@ -87,7 +93,7 @@ export default function UserMenu(): React.ReactElement {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                    <MenuItem onClick={handleClose}>Edit Profile</MenuItem>
+                    <MenuItem onClick={handleEditProfile}>Edit Profile</MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>

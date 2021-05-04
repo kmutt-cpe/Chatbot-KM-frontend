@@ -52,6 +52,9 @@ export const ValidateEditUserForm: FormikConfig<EditUserType>['validate'] = (val
 
 export const ValidateEditPasswordForm: FormikConfig<EditPasswordType>['validate'] = (values) => {
   const errors: ErrorUserType = {};
+  if (!values.oldPassword) {
+    errors.oldPassword = 'Required';
+  }
 
   if (!values.password) {
     errors.password = 'Required';

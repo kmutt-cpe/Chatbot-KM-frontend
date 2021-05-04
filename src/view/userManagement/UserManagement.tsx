@@ -81,7 +81,7 @@ const UserManagement: React.FC = () => {
               }
             />
           </Grid>
-          <Grid item container xs={2} justify="flex-end">
+          <Grid item container xs={2} justify="flex-start">
             <Button
               color="primary"
               variant="contained"

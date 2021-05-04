@@ -8,6 +8,7 @@ import { ValidateEditPasswordForm } from '../utils/ValidateUserForm';
 interface ChangePasswordProps {
   changePasswordState: boolean;
   setChangePasswordState: (state: boolean) => void;
+  oldPassword?: boolean;
 }
 
 const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProps) => {
@@ -17,6 +18,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
   const [updatePasswordPopup, setUpdatePasswordPopup] = React.useState(false);
   const formikPassword = useFormik<EditPasswordType>({
     initialValues: {
+      oldPassword: props.oldPassword ? '' : 'password',
       password: '',
       confirmPassword: '',
     },
@@ -26,6 +28,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       setUpdatePasswordPopup(true);
       props.setChangePasswordState(false);
       formikPassword.setValues({
+        oldPassword: props.oldPassword ? '' : 'password',
         password: '',
         confirmPassword: '',
       });
@@ -38,6 +41,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
     props.setChangePasswordState(false);
     setDiscardPopup(false);
     formikPassword.setValues({
+      oldPassword: props.oldPassword ? '' : 'password',
       password: '',
       confirmPassword: '',
     });
@@ -48,6 +52,34 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       {props.changePasswordState ? (
         <Grid item component="form" onSubmit={formikPassword.handleSubmit}>
           <Paper style={{ padding: '30px' }}>
+            {props.oldPassword && (
+              <Grid container direction="row" spacing={3}>
+                <Grid item xs={labelWidth}>
+                  <Typography
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'center',
+                      height: '100%',
+                    }}
+                  >
+                    Old password
+                  </Typography>
+                </Grid>
+                <Grid item xs={inputWidth}>
+                  <TextField
+                    id="oldPassword"
+                    type="password"
+                    variant="outlined"
+                    style={{ width: '100%' }}
+                    onChange={formikPassword.handleChange}
+                    value={formikPassword.values.oldPassword}
+                    error={formikPassword.errors.oldPassword ? true : false}
+                    helperText={formikPassword.errors.oldPassword || null}
+                  />
+                </Grid>
+              </Grid>
+            )}
             <Grid container direction="row" spacing={3}>
               <Grid item xs={labelWidth}>
                 <Typography
@@ -148,7 +180,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       <AlertModal
         open={updatePasswordPopup}
         handleClose={() => setUpdatePasswordPopup(false)}
-        alertTitle="Password Updated"
+        alertTitle="Password updated"
         alertMessage="The password have been updated"
       />
     </>

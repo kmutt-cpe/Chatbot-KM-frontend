@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Box, Toolbar, AppBar, Button } from '@material-ui/core';
 import { LogoImg } from '../../assets/img';
-import { Color } from '../../assets/css';
 import UserMenu from './UserMenu';
 import { useHistory } from 'react-router-dom';
 
