@@ -1,46 +1,62 @@
 import React from 'react';
-import { Typography, Grid, TextField, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
+import { Typography, Grid, TextField, Button, CircularProgress } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { EditUserType } from './utils/UserType';
 import { ValidateEditUserForm } from './utils/ValidateUserForm';
-import ChangePassword from './assets/ChangePassword';
-import { useHistory } from 'react-router-dom';
-import { users } from './domain/user.mock';
-import { useSelector } from 'react-redux';
-import { RootReducersType } from '../../redux/reducers';
+import ChangePasswordBlock from './assets/ChangePasswordBlock';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { QueryUserById } from '../../domain/query/user.query';
+import { MutateUpdateUser } from '../../domain/mutation/user.mutation';
 
-const EditProfile: React.FC = () => {
+const EditUserForm: React.FC = () => {
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
   const [changePasswordState, setChangePasswordState] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
   const labelWidth = 3;
   const inputWidth = 9;
   const history = useHistory();
+  const { userId } = useParams<{ userId: string }>();
 
-  const userId = useSelector((state: RootReducersType) => state.AuthReducer.authData?.id);
-
-  // todo: Implement get user from backend-api instead
-  const user = users.find((user) => user.id === userId);
-  if (!user) history.push('/user-management');
+  const { data, loading, error: queryError } = QueryUserById(userId);
+  const [updateUser, { error }] = MutateUpdateUser();
 
   const onDiscard = () => {
     setDiscardDisplay(false);
     history.goBack();
   };
 
+  const user = data?.getUserById ? data.getUserById : { id: '', username: '', name: '', role: '' };
+
   const formikUser = useFormik<EditUserType>({
     initialValues: {
-      // todo: remove empty string
-      username: user?.username || '',
-      name: user?.name || '',
+      username: user.username || '',
+      name: user.name || '',
     },
     validate: ValidateEditUserForm,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      history.goBack();
+      updateUser({
+        variables: {
+          user: {
+            id: userId,
+            name: values.name,
+            role: user.role,
+          },
+        },
+      })
+        .then(() => {
+          history.goBack();
+        })
+        .catch(() => {
+          setErrorModal(true);
+        });
     },
+    enableReinitialize: true,
   });
+
+  if (loading) return <CircularProgress />;
+  if (queryError) return <Redirect to="/page-not-found" />;
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -54,7 +70,7 @@ const EditProfile: React.FC = () => {
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
-            EDIT PROFILE
+            EDIT USER
           </Typography>
         </Grid>
         <Grid
@@ -94,10 +110,10 @@ const EditProfile: React.FC = () => {
                 />
               </Grid>
             </Grid>
-            <ChangePassword
+            <ChangePasswordBlock
               changePasswordState={changePasswordState}
               setChangePasswordState={setChangePasswordState}
-              oldPassword
+              userId={userId}
             />
             <Grid item container direction="row" spacing={3}>
               <Grid item xs={labelWidth}>
@@ -159,8 +175,9 @@ const EditProfile: React.FC = () => {
         actionText="Discard"
         open={discardDisplay}
       />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </BasicLayout>
   );
 };
 
-export default EditProfile;
+export default EditUserForm;

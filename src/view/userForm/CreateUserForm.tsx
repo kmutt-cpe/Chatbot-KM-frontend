@@ -1,18 +1,21 @@
 import React from 'react';
 import { Typography, Grid, TextField, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { CreateUserType } from './utils/UserType';
 import { ValidateCreateUserForm } from './utils/ValidateUserForm';
 import { useHistory } from 'react-router-dom';
+import { MutateCreateUser } from '../../domain/mutation/user.mutation';
 
-const CreateUser: React.FC = () => {
+const CreateUserForm: React.FC = () => {
   const labelWidth = 3;
   const inputWidth = 9;
   const history = useHistory();
 
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
+  const [createUser, { error }] = MutateCreateUser();
 
   const onDiscard = () => {
     setDiscardDisplay(false);
@@ -28,8 +31,22 @@ const CreateUser: React.FC = () => {
     },
     validate: ValidateCreateUserForm,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      history.push('/user-management');
+      createUser({
+        variables: {
+          user: {
+            username: values.username.toLowerCase(),
+            password: values.password,
+            name: values.name,
+            role: 'admin',
+          },
+        },
+      })
+        .then(() => {
+          history.push('/user-management');
+        })
+        .catch(() => {
+          setErrorModal(true);
+        });
     },
   });
 
@@ -195,8 +212,9 @@ const CreateUser: React.FC = () => {
         actionText="Discard"
         open={discardDisplay}
       />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </BasicLayout>
   );
 };
 
-export default CreateUser;
+export default CreateUserForm;

@@ -13,17 +13,19 @@ import {
   TablePagination,
   Box,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
-import { users } from './domain/user.mock';
+
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import DeleteCategory from './assets/DeleteUser';
+import DeleteUser from './assets/DeleteUser';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import { IconButton } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+import { QueryAllUser } from '../../domain/query/user.query';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -55,6 +57,12 @@ const UserManagement: React.FC = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  const { data, loading, error } = QueryAllUser();
+  if (loading) return <CircularProgress />;
+  if (error) return null;
+
+  const users = data ? data.getAllUser : [];
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -169,11 +177,7 @@ const UserManagement: React.FC = () => {
                               </IconButton>
                             </Box>
                             <Box mr={1}>
-                              <DeleteCategory
-                                id={user.id}
-                                username={user.username}
-                                name={user.name}
-                              />
+                              <DeleteUser id={user.id} username={user.username} name={user.name} />
                             </Box>
                           </Box>
                         </TableCell>

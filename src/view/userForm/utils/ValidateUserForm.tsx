@@ -39,7 +39,7 @@ export const ValidateEditUserForm: FormikConfig<EditUserType>['validate'] = (val
   else if (!/([A-Za-z0-9]+)/i.test(values.username))
     errors.username = 'Username must contain only alphabet or number';
   else if (values.username.length > 20) errors.username = 'Username is too long';
-  else if (values.username.length < 5) errors.username = 'Username is too short';
+  else if (values.username.length < 3) errors.username = 'Username is too short';
 
   if (!values.name) {
     errors.name = 'Required';
@@ -52,8 +52,8 @@ export const ValidateEditUserForm: FormikConfig<EditUserType>['validate'] = (val
 
 export const ValidateEditPasswordForm: FormikConfig<EditPasswordType>['validate'] = (values) => {
   const errors: ErrorUserType = {};
-  if (!values.oldPassword) {
-    errors.oldPassword = 'Required';
+  if (!values.editorPassword) {
+    errors.editorPassword = 'Required';
   }
 
   if (!values.password) {

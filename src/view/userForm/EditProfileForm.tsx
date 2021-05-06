@@ -1,43 +1,65 @@
 import React from 'react';
-import { Typography, Grid, TextField, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
+import { Typography, Grid, TextField, Button, CircularProgress } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { EditUserType } from './utils/UserType';
 import { ValidateEditUserForm } from './utils/ValidateUserForm';
-import ChangePassword from './assets/ChangePassword';
-import { useHistory, useParams } from 'react-router-dom';
-import { users } from './domain/user.mock';
+import ChangePasswordBlock from './assets/ChangePasswordBlock';
+import { Redirect, useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../lib/redux/reducers';
+import { QueryUserById } from '../../domain/query/user.query';
+import { MutateUpdateUser } from '../../domain/mutation/user.mutation';
 
-const EditUser: React.FC = () => {
+const EditProfileForm: React.FC = () => {
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
   const [changePasswordState, setChangePasswordState] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
   const labelWidth = 3;
   const inputWidth = 9;
   const history = useHistory();
-  const { userId } = useParams<{ userId: string }>();
 
-  // todo: Implement get user from backend-api instead
-  const user = users.find((user) => user.id === userId);
-  if (!user) history.push('/user-management');
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const userId = authData ? authData.id : '';
+  const { data, loading, error: queryError } = QueryUserById(userId);
+  const user = data ? data.getUserById : { id: '', username: '', name: '', role: '' };
+
+  const [updateUser, { error }] = MutateUpdateUser();
+  const formikUser = useFormik<EditUserType>({
+    initialValues: {
+      username: user.username,
+      name: user.name,
+    },
+    validate: ValidateEditUserForm,
+    onSubmit: (values) => {
+      updateUser({
+        variables: {
+          user: {
+            id: userId,
+            name: values.name,
+            role: user.role,
+          },
+        },
+      })
+        .then(() => {
+          history.goBack();
+        })
+        .catch(() => {
+          setErrorModal(true);
+        });
+    },
+    enableReinitialize: true,
+  });
 
   const onDiscard = () => {
     setDiscardDisplay(false);
     history.goBack();
   };
 
-  const formikUser = useFormik<EditUserType>({
-    initialValues: {
-      // todo: remove empty string
-      username: user?.username || '',
-      name: user?.name || '',
-    },
-    validate: ValidateEditUserForm,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      history.goBack();
-    },
-  });
+  if (!authData) return <Redirect to="/logout" />;
+  if (loading) return <CircularProgress />;
+  if (queryError) return <Redirect to="/page-not-found" />;
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -51,7 +73,7 @@ const EditUser: React.FC = () => {
         </Grid>
         <Grid item style={{ height: '50px' }}>
           <Typography variant="h1" color="secondary">
-            EDIT USER
+            EDIT PROFILE
           </Typography>
         </Grid>
         <Grid
@@ -87,13 +109,15 @@ const EditUser: React.FC = () => {
                   value={formikUser.values.username}
                   error={formikUser.errors.username ? true : false}
                   helperText={formikUser.errors.username || null}
-                  disabled={changePasswordState}
+                  disabled
                 />
               </Grid>
             </Grid>
-            <ChangePassword
+            <ChangePasswordBlock
               changePasswordState={changePasswordState}
               setChangePasswordState={setChangePasswordState}
+              userId={userId}
+              isEditProfile
             />
             <Grid item container direction="row" spacing={3}>
               <Grid item xs={labelWidth}>
@@ -155,8 +179,9 @@ const EditUser: React.FC = () => {
         actionText="Discard"
         open={discardDisplay}
       />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </BasicLayout>
   );
 };
 
-export default EditUser;
+export default EditProfileForm;
