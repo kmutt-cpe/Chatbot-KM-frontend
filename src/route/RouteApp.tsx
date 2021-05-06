@@ -54,11 +54,11 @@ const UserManagement = Loadable({
   loading: () => <CircularProgress />,
 });
 const CreateUser = Loadable({
-  loader: () => import('../view/userForm/CreateUser'),
+  loader: () => import('../view/userForm/CreateUserForm'),
   loading: () => <CircularProgress />,
 });
 const EditUser = Loadable({
-  loader: () => import('../view/userForm/EditUser'),
+  loader: () => import('../view/userForm/EditUserForm'),
   loading: () => <CircularProgress />,
 });
 const UserView = Loadable({
@@ -66,11 +66,15 @@ const UserView = Loadable({
   loading: () => <CircularProgress />,
 });
 const EditProfile = Loadable({
-  loader: () => import('../view/userForm/EditProfile'),
+  loader: () => import('../view/userForm/EditProfileForm'),
   loading: () => <CircularProgress />,
 });
 const Contact = Loadable({
   loader: () => import('../view/contact/Contact'),
+  loading: () => <CircularProgress />,
+});
+const Logout = Loadable({
+  loader: () => import('../view/logout/Logout'),
   loading: () => <CircularProgress />,
 });
 
@@ -98,6 +102,8 @@ export const RouteApp: React.FC = (): React.ReactElement => {
         <PrivateRoute exact path="/edit-user/:userId" component={EditUser} />
         <PrivateRoute exact path="/user-view/:userId" component={UserView} />
         <PrivateRoute exact path="/edit-profile" component={EditProfile} />
+        <PrivateRoute exact path="/logout" component={Logout}></PrivateRoute>
+        <Route path="/page-not-found" component={PageNotFound} />
         <Route component={PageNotFound} />
       </Switch>
     </Router>
