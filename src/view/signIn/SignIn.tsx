@@ -7,49 +7,69 @@ import { useFormik } from 'formik';
 import { SignInType } from './utils/SignInType';
 import { ValidateSignInForm } from './utils/ValidateSignInForm';
 import { useDispatch } from 'react-redux';
-import { AuthActionType } from '../../redux/auth/auth.type';
-import { useHistory } from 'react-router-dom';
-
-const mockUser = [
-  {
-    id: 'User-0',
-    username: 'username1',
-    password: 'password1',
-    name: 'name1',
-    role: 'admin',
-  },
-  {
-    id: 'User-1',
-    username: 'username2',
-    password: 'password2',
-    name: 'name2',
-    role: 'admin',
-  },
-];
+import { AuthActionType } from '../../lib/redux/auth/auth.type';
+import { Redirect, useHistory } from 'react-router-dom';
+import { QueryLogin } from '../../domain/query/auth.query';
+import Cookies from 'universal-cookie';
 
 const SignIn = (): React.ReactElement => {
-  const dispatch = useDispatch();
-  const history = useHistory();
-
   const [wrongPasswordPopup, setWrongPasswordPopup] = React.useState(false);
-
   const formik = useFormik<SignInType>({
     initialValues: {
       username: '',
       password: '',
     },
+
     validate: ValidateSignInForm,
-    onSubmit: (values, action) => {
-      const user = mockUser.find((user) => user.username === values.username);
-      if (user?.password === values.password) {
-        dispatch({ type: AuthActionType.SET_AUTH, authData: { ...user, token: 'tokennaja' } });
-        history.push('/question-management');
-      } else {
+    onSubmit: async (values, action) => {
+      getLogin({
+        variables: { username: formik.values.username, password: formik.values.password },
+      });
+
+      /** If it is not GraphQL Error */
+      if (error && error?.graphQLErrors.length === 0) {
+        alert(error);
+        return;
+      }
+
+      const graphQlError =
+        error &&
+        error.graphQLErrors.filter(
+          (graphQlError) => graphQlError?.message === 'Incorrect username or password'
+        );
+
+      /** If it is not incorrect username and password error, */
+      if (error && error?.graphQLErrors.length > 0 && !graphQlError) {
+        alert(error);
+        return;
+      }
+      /** If it is incorrect username and password error, */
+      if (graphQlError || !data || data.login.authorization === '') {
         setWrongPasswordPopup(true);
         action.setFieldValue('password', '');
+      } else {
+        /** Otherwise, working correctly */
+        const auth = data?.login;
+        dispatch({ type: AuthActionType.SET_AUTH, authData: { ...auth } });
+        history.push('/question-management');
       }
     },
   });
+
+  const [getLogin, { error, data }] = QueryLogin();
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  /* Check login state from cookie */
+  const cookies = new Cookies();
+  const userCookie = cookies.get('user');
+  const authCookie = cookies.get('authorization');
+  if (userCookie && authCookie) {
+    return <Redirect to="/question-management" />;
+  } else {
+    cookies.remove('user');
+    cookies.remove('authorization');
+  }
 
   return (
     <>
@@ -128,7 +148,7 @@ const SignIn = (): React.ReactElement => {
       <AlertModal
         open={wrongPasswordPopup}
         handleClose={() => setWrongPasswordPopup(false)}
-        alertTitle="An error occured"
+        alertTitle="Alert"
         alertMessage="Incorrect username or password"
       />
     </>
