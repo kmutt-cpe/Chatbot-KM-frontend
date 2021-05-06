@@ -39,7 +39,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "redux-logger": "^3.0.6",
-    "typescript": "~3.7.2"
+    "typescript": "~3.7.2",
+    "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
     "@material-ui/core": "^4.11.3",
