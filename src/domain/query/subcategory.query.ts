@@ -25,3 +25,21 @@ export const GetSubcategoryByCategoryId = (id: string) => {
     }
   );
 };
+
+export const QueryAllSubcategory = () => {
+  const getAllSubcategoryGql = gql`
+    query getAllSubcategory {
+      getAllSubcategory {
+        id
+        subcategory
+        category {
+          id
+          category
+        }
+      }
+    }
+  `;
+  return useQuery<{ getAllSubcategory: Subcategory[] }>(getAllSubcategoryGql, {
+    fetchPolicy: 'network-only',
+  });
+};

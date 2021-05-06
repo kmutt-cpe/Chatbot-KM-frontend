@@ -8,6 +8,10 @@ export const QueryAllCategory = () => {
       getAllCategory {
         id
         category
+        subcategories {
+          id
+          subcategory
+        }
       }
     }
   `;
