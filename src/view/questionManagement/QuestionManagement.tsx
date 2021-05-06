@@ -7,17 +7,24 @@ import {
   TextField,
   InputAdornment,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
 import CategoryCard from './assets/CategoryCard';
-import { categories } from './domain/category.mock';
 import SearchIcon from '@material-ui/icons/Search';
 import { useHistory } from 'react-router-dom';
+import { QueryAllCategory } from '../../domain/query/category.query';
+import { Redirect } from 'react-router-dom';
 
 const QuestionManagement: React.FC = () => {
   const history = useHistory();
-
   const [searchText, setSearchText] = React.useState('');
+
+  const { loading, error, data } = QueryAllCategory();
+  if (loading) return <CircularProgress />;
+  if (error) return <Redirect to="/page-not-found" />;
+
+  const categories = data ? data.getAllCategory : [];
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
