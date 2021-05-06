@@ -1,8 +1,12 @@
 import React from 'react';
-import { ConfirmModal } from '../../../component';
+import { ConfirmModal, AlertModal, ErrorModal } from '../../../component';
 import { Color } from '../../../assets/css';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import { IconButton } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { RootReducersType } from '../../../lib/redux/reducers';
+import { MutateDeleteUser } from '../../../domain/mutation/user.mutation';
 
 interface DeleteCategoryProps {
   username?: string;
@@ -10,37 +14,62 @@ interface DeleteCategoryProps {
   id?: string;
 }
 
-const DeleteCategory: React.FC<DeleteCategoryProps> = (props: DeleteCategoryProps) => {
+const DeleteUser: React.FC<DeleteCategoryProps> = (props: DeleteCategoryProps) => {
   const [modal, setModal] = React.useState(false);
-  const onOpenModal = () => {
-    setModal(true);
-  };
+  const [alertModal, setAlertModal] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
 
-  const onCloseModal = () => {
-    setModal(false);
-  };
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const userId = authData ? authData.id : '';
+  const [deleteUser, { error }] = MutateDeleteUser();
 
   const onDelete = () => {
-    // todo: Add on confirm delete
-    setModal(false);
+    deleteUser({
+      variables: {
+        id: props.id,
+      },
+    })
+      .then(() => {
+        setModal(false);
+        window.location.reload();
+      })
+      .catch(() => {
+        setErrorModal(true);
+      });
   };
+
+  if (!authData) return <Redirect to="/logout" />;
+  if (error) return null;
 
   return (
     <div>
-      <IconButton onClick={onOpenModal} size="small">
+      <IconButton
+        onClick={() => {
+          if (userId === props.id) setAlertModal(true);
+          else setModal(true);
+        }}
+        size="small"
+      >
         <DeleteRoundedIcon style={{ color: Color.red }} />
       </IconButton>
       <ConfirmModal
         open={modal}
         onAction={onDelete}
-        onReject={onCloseModal}
-        onClose={onCloseModal}
-        dialogContent={`Are you sure, you want to delete ${props.username}?`}
+        onReject={() => setModal(false)}
+        onClose={() => setModal(false)}
+        dialogTitle={`Are you sure, you want to delete ${props.username}?`}
         actionText="Delete"
         rejectText="Cancel"
       />
+      <AlertModal
+        open={alertModal}
+        handleClose={() => setAlertModal(false)}
+        alertTitle="Error"
+        alertMessage="You can't delete your account"
+      />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </div>
   );
 };
 
-export default DeleteCategory;
+export default DeleteUser;

@@ -12,18 +12,18 @@ import {
   TableCell,
   TablePagination,
   Box,
+  CircularProgress,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, BackButton } from '../../component';
-import { subcategories as subcategoriesDB } from './domain/subcategory.mock';
-import { categories } from './domain/category.mock';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import DeleteSubcategory from './assets/DeleteSubcategory';
-import CreateSubcategory from './assets/CreateSubcategory';
-import EditSubcategory from './assets/EditSubcategory';
+import DeleteSubcategory from './assets/DeleteSubcategoryModal';
+import CreateSubcategoryModal from './assets/CreateSubcategoryModal';
+import EditSubcategory from './assets/EditSubcategoryModal';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
+import { GetSubcategoryByCategoryId } from '../../domain/query/subcategory.query';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -45,15 +45,7 @@ const SubcategoryManagement: React.FC = () => {
   const [page, setPage] = React.useState(0);
   const [searchText, setSearchText] = React.useState('');
 
-  const history = useHistory();
   const { categoryId } = useParams<{ categoryId: string }>();
-
-  // todo: Implement get subcategories from backend-api instead
-  const category = categories.find((category) => category.id === categoryId);
-  if (!category) history.push('/category-management');
-  const subcategories = subcategoriesDB.filter(
-    (subcategory) => subcategory.category.id === categoryId
-  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -63,6 +55,13 @@ const SubcategoryManagement: React.FC = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  const { loading, error, data } = GetSubcategoryByCategoryId(categoryId);
+  if (loading) return <CircularProgress />;
+  if (error) return <Redirect to="/page-not-found" />;
+
+  const subcategories = data ? data.getSubcategoryByCategoryId : [];
+  const category = data ? data.getCategoryById : null;
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -98,7 +97,7 @@ const SubcategoryManagement: React.FC = () => {
             />
           </Grid>
           <Grid item container xs={3} justify="flex-end">
-            <CreateSubcategory />
+            <CreateSubcategoryModal category={category?.category} categoryId={category?.id} />
           </Grid>
         </Grid>
 

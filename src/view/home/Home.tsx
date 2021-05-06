@@ -3,7 +3,7 @@ import { Box, Typography } from '@material-ui/core';
 import { Footer, LandingNavbar, BasicLayout } from '../../component';
 import { BackgroundImg, LogoImg } from '../../assets/img';
 
-const home: React.FC = () => {
+const Home: React.FC = () => {
   return (
     <BasicLayout
       footer={<Footer />}
@@ -33,4 +33,4 @@ const home: React.FC = () => {
   );
 };
 
-export default home;
+export default Home;

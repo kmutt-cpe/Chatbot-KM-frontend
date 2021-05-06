@@ -1,8 +1,9 @@
 import React from 'react';
-import { InputModal } from '../../../component';
+import { InputModal, ErrorModal } from '../../../component';
 import { Color } from '../../../assets/css';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import { IconButton } from '@material-ui/core';
+import { MutateUpdateSubcategory } from '../../../domain/mutation/subcategory.mutation';
 
 interface EditCategoryProps {
   subcategory?: string;
@@ -11,6 +12,9 @@ interface EditCategoryProps {
 
 const EditCategory: React.FC<EditCategoryProps> = (props: EditCategoryProps) => {
   const [modal, setModal] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
+  const [editSubcategory, { error }] = MutateUpdateSubcategory();
+
   const onOpenModal = () => {
     setModal(true);
   };
@@ -19,9 +23,13 @@ const EditCategory: React.FC<EditCategoryProps> = (props: EditCategoryProps) => 
     setModal(false);
   };
 
-  const onEdit = (desc?: string) => {
-    // todo: Add on confirm edit
-    setModal(false);
+  const onEdit = (subcategory?: string) => {
+    editSubcategory({ variables: { subcategory: { id: props.id, subcategory } } })
+      .then(() => {
+        setModal(false);
+        window.location.reload();
+      })
+      .catch(() => setErrorModal(true));
   };
 
   return (
@@ -39,6 +47,7 @@ const EditCategory: React.FC<EditCategoryProps> = (props: EditCategoryProps) => 
         actionText="Save"
         rejectText="Cancel"
       />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </div>
   );
 };

@@ -13,6 +13,7 @@ import {
   TablePagination,
   Box,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, BackButton } from '../../component';
 import SearchIcon from '@material-ui/icons/Search';
@@ -23,8 +24,8 @@ import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import { IconButton } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import { faqs as faqDB } from './domain/faq.mock';
-import { categories } from './domain/category.mock';
+import { QueryFAQByCategoryId } from '../../domain/query/faq.query';
+import { Redirect } from 'react-router-dom';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -49,10 +50,11 @@ const QuestionList: React.FC = () => {
   const history = useHistory();
   const { categoryId } = useParams<{ categoryId: string }>();
 
-  // todo: Get category and faq from backend-api instead
-  const category = categories.find((category) => category.id === categoryId);
-  if (!category) history.push('/question-management');
-  const faqs = faqDB.filter((faq) => faq.category.id === categoryId);
+  const { loading, error, data } = QueryFAQByCategoryId(categoryId);
+  if (loading) return <CircularProgress />;
+  if (error) return <Redirect to="/page-not-found" />;
+  const faqs = data ? data.getFAQByCategoryId : [];
+  const category = data ? data.getCategoryById : null;
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);

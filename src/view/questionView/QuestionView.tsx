@@ -1,27 +1,46 @@
 import React from 'react';
-import { Typography, Grid, Button } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
+import { Typography, Grid, Button, CircularProgress } from '@material-ui/core';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useHistory, useParams } from 'react-router-dom';
-import { faqs } from './domain/faq.mock';
+import { QueryFAQById } from '../../domain/query/faq.query';
+import { MutateDeleteFAQ } from '../../domain/mutation/faq.mutation';
 
 const QuestionView: React.FC = () => {
   const labelWidth = 5;
   const inputWidth = 7;
+  const [errorModal, setErrorModal] = React.useState(false);
 
   const history = useHistory();
   const { faqId } = useParams<{ faqId: string }>();
 
-  // todo: Implement get faq from backend-api instead
-  const faq = faqs.find((faq) => faq.id === faqId);
-  if (!faq) history.push('/question-management');
-
+  const { data, loading, error: faqError } = QueryFAQById(faqId);
   const [deletePopup, setDeletePopup] = React.useState(false);
+  const [deleteFAQ, { error }] = MutateDeleteFAQ();
 
-  const onDiscard = () => {
-    setDeletePopup(false);
+  const onDelete = () => {
+    deleteFAQ({
+      variables: {
+        id: faqId,
+      },
+    })
+      .then(() => {
+        setDeletePopup(false);
+        window.location.reload();
+      })
+      .catch(() => {
+        setErrorModal(true);
+      });
     history.goBack();
   };
+
+  if (loading) return <CircularProgress />;
+  if (error || !data || !data.getFAQById) return null;
+
+  const faq = data.getFAQById;
+  const updatedDate = new Date(faq.updatedDate);
+
+  if (faqError) return null;
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -175,7 +194,7 @@ const QuestionView: React.FC = () => {
                   height: '100%',
                 }}
               >
-                {`${faq?.updatedDate.getDate()}/${faq?.updatedDate.getMonth()}/${faq?.updatedDate.getFullYear()}`}
+                {`${updatedDate.getDate()}/${updatedDate.getMonth()}/${updatedDate.getFullYear()}`}
               </Typography>
             </Grid>
           </Grid>
@@ -242,7 +261,7 @@ const QuestionView: React.FC = () => {
         </Grid>
       </Grid>
       <ConfirmModal
-        onAction={onDiscard}
+        onAction={onDelete}
         onReject={() => setDeletePopup(false)}
         onClose={() => setDeletePopup(false)}
         dialogTitle={'Delete user?'}
@@ -251,6 +270,7 @@ const QuestionView: React.FC = () => {
         actionText="Delete"
         open={deletePopup}
       />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </BasicLayout>
   );
 };

@@ -1,34 +1,82 @@
 import { Grid, Paper, Typography, Button, TextField } from '@material-ui/core';
 import { useFormik } from 'formik';
 import React from 'react';
-import { ConfirmModal, AlertModal } from '../../../component';
+import { useSelector } from 'react-redux';
+import { ConfirmModal, AlertModal, ErrorModal } from '../../../component';
+import {
+  MutateChangePassword,
+  MutateSetPasswordByAdmin,
+} from '../../../domain/mutation/user.mutation';
+import { RootReducersType } from '../../../lib/redux/reducers';
 import { EditPasswordType } from '../utils/UserType';
 import { ValidateEditPasswordForm } from '../utils/ValidateUserForm';
 
 interface ChangePasswordProps {
   changePasswordState: boolean;
   setChangePasswordState: (state: boolean) => void;
-  oldPassword?: boolean;
+  userId: string;
+  isEditProfile?: boolean /* Use to indicate that edit profile or edit user (in user management) */;
 }
 
-const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProps) => {
+const ChangePasswordBlock: React.FC<ChangePasswordProps> = (props: ChangePasswordProps) => {
   const labelWidth = 3;
   const inputWidth = 9;
 
   const [updatePasswordPopup, setUpdatePasswordPopup] = React.useState(false);
+  const [errorModal, setErrorModal] = React.useState(false);
+
+  const [changePassword, { error: errorChangePassword }] = MutateChangePassword();
+  const [setPasswordByAdmin, { error: errorSetPassword }] = MutateSetPasswordByAdmin();
+
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const userId = authData ? authData.id : '';
+
   const formikPassword = useFormik<EditPasswordType>({
     initialValues: {
-      oldPassword: props.oldPassword ? '' : 'password',
+      editorPassword: '',
       password: '',
       confirmPassword: '',
     },
     validate: ValidateEditPasswordForm,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      setUpdatePasswordPopup(true);
-      props.setChangePasswordState(false);
+      if (props.isEditProfile) {
+        changePassword({
+          variables: {
+            user: {
+              id: props.userId,
+              password: values.password,
+              editorPassword: values.editorPassword,
+            },
+          },
+        })
+          .then(() => {
+            setUpdatePasswordPopup(true);
+            props.setChangePasswordState(false);
+          })
+          .catch(() => {
+            setErrorModal(true);
+          });
+      } else
+        setPasswordByAdmin({
+          variables: {
+            user: {
+              id: props.userId,
+              password: values.password,
+              editorPassword: values.editorPassword,
+              editorId: userId,
+            },
+          },
+        })
+          .then(() => {
+            props.setChangePasswordState(false);
+            setUpdatePasswordPopup(true);
+          })
+          .catch(() => {
+            setErrorModal(true);
+          });
+
       formikPassword.setValues({
-        oldPassword: props.oldPassword ? '' : 'password',
+        editorPassword: '',
         password: '',
         confirmPassword: '',
       });
@@ -41,7 +89,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
     props.setChangePasswordState(false);
     setDiscardPopup(false);
     formikPassword.setValues({
-      oldPassword: props.oldPassword ? '' : 'password',
+      editorPassword: '',
       password: '',
       confirmPassword: '',
     });
@@ -52,7 +100,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
       {props.changePasswordState ? (
         <Grid item component="form" onSubmit={formikPassword.handleSubmit}>
           <Paper style={{ padding: '30px' }}>
-            {props.oldPassword && (
+            {props.isEditProfile && (
               <Grid container direction="row" spacing={3}>
                 <Grid item xs={labelWidth}>
                   <Typography
@@ -68,14 +116,14 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
                 </Grid>
                 <Grid item xs={inputWidth}>
                   <TextField
-                    id="oldPassword"
+                    id="editorPassword"
                     type="password"
                     variant="outlined"
                     style={{ width: '100%' }}
                     onChange={formikPassword.handleChange}
-                    value={formikPassword.values.oldPassword}
-                    error={formikPassword.errors.oldPassword ? true : false}
-                    helperText={formikPassword.errors.oldPassword || null}
+                    value={formikPassword.values.editorPassword}
+                    error={formikPassword.errors.editorPassword ? true : false}
+                    helperText={formikPassword.errors.editorPassword || null}
                   />
                 </Grid>
               </Grid>
@@ -132,6 +180,34 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
                 />
               </Grid>
             </Grid>
+            {!props.isEditProfile && (
+              <Grid container direction="row" spacing={3}>
+                <Grid item xs={labelWidth}>
+                  <Typography
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'center',
+                      height: '100%',
+                    }}
+                  >
+                    Your password
+                  </Typography>
+                </Grid>
+                <Grid item xs={inputWidth}>
+                  <TextField
+                    id="editorPassword"
+                    type="password"
+                    variant="outlined"
+                    style={{ width: '100%' }}
+                    onChange={formikPassword.handleChange}
+                    value={formikPassword.values.editorPassword}
+                    error={formikPassword.errors.editorPassword ? true : false}
+                    helperText={formikPassword.errors.editorPassword || 'For security'}
+                  />
+                </Grid>
+              </Grid>
+            )}
             <Grid item container direction="row" spacing={2} justify="flex-end">
               <Grid item>
                 <Button color="primary" onClick={() => setDiscardPopup(true)}>
@@ -183,8 +259,13 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props: ChangePasswordProp
         alertTitle="Password updated"
         alertMessage="The password have been updated"
       />
+      <ErrorModal
+        open={errorModal}
+        handleClose={() => setErrorModal(false)}
+        error={props.isEditProfile ? errorChangePassword : errorSetPassword}
+      />
     </>
   );
 };
 
-export default ChangePassword;
+export default ChangePasswordBlock;

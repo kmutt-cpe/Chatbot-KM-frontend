@@ -3,34 +3,28 @@ import { ConfirmModal, ErrorModal } from '../../../component';
 import { Color } from '../../../assets/css';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import { IconButton } from '@material-ui/core';
-import { MutateDeleteFAQ } from '../../../domain/mutation/faq.mutation';
+import { MutateDeleteSubcategory } from '../../../domain/mutation/subcategory.mutation';
 
-interface DeleteQuestionProps {
-  question?: string;
+interface DeleteCategoryModalProps {
+  subcategory?: string;
   id?: string;
 }
 
-const DeleteQuestion: React.FC<DeleteQuestionProps> = (props: DeleteQuestionProps) => {
+const DeleteCategoryModal: React.FC<DeleteCategoryModalProps> = (
+  props: DeleteCategoryModalProps
+) => {
   const [modal, setModal] = React.useState(false);
   const [errorModal, setErrorModal] = React.useState(false);
-  const [deleteFAQ, { error }] = MutateDeleteFAQ();
+  const [deleteSubcategory, { error }] = MutateDeleteSubcategory();
 
   const onDelete = () => {
-    deleteFAQ({
-      variables: {
-        id: props.id,
-      },
-    })
+    setModal(false);
+    deleteSubcategory({ variables: { id: props.id } })
       .then(() => {
-        setModal(false);
         window.location.reload();
       })
-      .catch(() => {
-        setErrorModal(true);
-      });
+      .catch(() => setErrorModal(true));
   };
-
-  if (error) return null;
 
   return (
     <>
@@ -43,7 +37,7 @@ const DeleteQuestion: React.FC<DeleteQuestionProps> = (props: DeleteQuestionProp
         onReject={() => setModal(false)}
         onClose={() => setModal(false)}
         dialogTitle="Delete confirmation"
-        dialogContent={`Are you sure you want to delete ${props.question}?`}
+        dialogContent={`Are you sure you want to delete ${props.subcategory}?`}
         actionText="Delete"
         rejectText="Cancel"
       />
@@ -52,4 +46,4 @@ const DeleteQuestion: React.FC<DeleteQuestionProps> = (props: DeleteQuestionProp
   );
 };
 
-export default DeleteQuestion;
+export default DeleteCategoryModal;
