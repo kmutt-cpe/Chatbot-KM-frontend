@@ -6,7 +6,7 @@ import { useFormik } from 'formik';
 import { EditUserType } from './utils/UserType';
 import { ValidateEditUserForm } from './utils/ValidateUserForm';
 import ChangePasswordBlock from './assets/ChangePasswordBlock';
-import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { QueryUserById } from '../../domain/query/user.query';
 import { MutateUpdateUser } from '../../domain/mutation/user.mutation';
 
@@ -56,7 +56,7 @@ const EditUserForm: React.FC = () => {
   });
 
   if (loading) return <CircularProgress />;
-  if (queryError) return <Redirect to="/page-not-found" />;
+  if (queryError) return null;
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>

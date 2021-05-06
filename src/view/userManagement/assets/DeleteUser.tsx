@@ -1,8 +1,8 @@
 import React from 'react';
-import { ConfirmModal, AlertModal, InputModal, ErrorModal } from '../../../component';
+import { ConfirmModal, AlertModal, ErrorModal } from '../../../component';
 import { Color } from '../../../assets/css';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
-import { CircularProgress, IconButton } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { RootReducersType } from '../../../lib/redux/reducers';
@@ -39,7 +39,7 @@ const DeleteUser: React.FC<DeleteCategoryProps> = (props: DeleteCategoryProps) =
   };
 
   if (!authData) return <Redirect to="/logout" />;
-  if (error) return <Redirect to="/page-not-found" />;
+  if (error) return null;
 
   return (
     <div>

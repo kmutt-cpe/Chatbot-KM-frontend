@@ -59,7 +59,7 @@ const EditProfileForm: React.FC = () => {
 
   if (!authData) return <Redirect to="/logout" />;
   if (loading) return <CircularProgress />;
-  if (queryError) return <Redirect to="/page-not-found" />;
+  if (queryError) return null;
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
