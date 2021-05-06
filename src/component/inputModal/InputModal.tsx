@@ -19,16 +19,24 @@ interface InputModalProps {
   actionText?: string;
   value?: string;
   open: boolean;
+  required?: boolean;
 }
 
 const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
   const [text, setText] = React.useState(props.value || '');
+  const [error, setError] = React.useState(false);
 
   return (
     <div>
       <Dialog open={props.open} onClose={props.onClose} maxWidth="xs" fullWidth={true}>
         <div style={{ width: '100%', padding: '15px' }}>
-          <form>
+          <form onSubmit={() => {
+                      if (props.required && text === '') setError(true);
+                      else {
+                        setError(false);
+                        props.onAction(text);
+                      }
+                    }}>
             <DialogTitle>
               <Typography variant="h4" color="primary" align="center">
                 {props.dialogTitle || 'DialogText'}
@@ -44,6 +52,8 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
                     variant="standard"
                     style={{ width: '100%' }}
                     value={text}
+                    error={error}
+                    helperText={error && 'Required'}
                   />
                 </Grid>
               </Grid>
@@ -56,7 +66,12 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" color="primary" onClick={() => props.onAction(text)}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    autoFocus
+                  >
                     {props.actionText || 'Yes'}
                   </Button>
                 </Grid>

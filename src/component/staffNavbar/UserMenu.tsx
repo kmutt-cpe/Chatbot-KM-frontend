@@ -9,8 +9,8 @@ import MenuList from '@material-ui/core/MenuList';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { AuthActionType } from '../../redux/auth/auth.type';
-import { RootReducersType } from '../../redux/reducers';
+import { AuthActionType } from '../../lib/redux/auth/auth.type';
+import { RootReducersType } from '../../lib/redux/reducers';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,7 +27,7 @@ export default function UserMenu(): React.ReactElement {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
-  const authData = useSelector((state: RootReducersType) => state.AuthReducer?.authData);
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -50,8 +50,8 @@ export default function UserMenu(): React.ReactElement {
 
   const handleLogout = () => {
     dispatch({ type: AuthActionType.REMOVE_AUTH });
-    history.push('/');
     setOpen(false);
+    history.push('/logout');
   };
 
   function handleListKeyDown(event: React.KeyboardEvent) {
