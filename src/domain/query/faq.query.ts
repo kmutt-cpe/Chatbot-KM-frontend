@@ -39,3 +39,57 @@ export const QueryFAQByCategoryId = (id: string) => {
     fetchPolicy: 'network-only',
   });
 };
+
+export const QueryFAQById = (id: string) => {
+  const getFAQByIdGql = gql`
+    query getFAQById($id: ID!) {
+      getFAQById(id: $id) {
+        id
+        question
+        answer
+        lastEditor {
+          id
+          username
+          name
+          role
+        }
+        subcategory {
+          id
+          subcategory
+        }
+        category {
+          id
+          category
+        }
+        updatedDate
+      }
+
+      getAllSubcategory {
+        id
+        subcategory
+        category {
+          category
+          id
+        }
+      }
+
+      getAllCategory {
+        id
+        category
+        subcategories {
+          id
+          subcategory
+        }
+      }
+    }
+  `;
+
+  return useQuery<{
+    getFAQById: FAQ;
+    getAllSubcategory: Subcategory[];
+    getAllCategory: Category[];
+  }>(getFAQByIdGql, {
+    variables: { id },
+    fetchPolicy: 'network-only',
+  });
+};

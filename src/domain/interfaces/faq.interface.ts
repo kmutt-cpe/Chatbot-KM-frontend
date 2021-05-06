@@ -9,5 +9,5 @@ export interface FAQ {
   subcategory: Subcategory;
   category: Category;
   lastEditor: User;
-  updatedDate: Date;
+  updatedDate: string;
 }
