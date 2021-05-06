@@ -1,8 +1,9 @@
 import React from 'react';
-import { ConfirmModal } from '../../../component';
+import { ConfirmModal, ErrorModal } from '../../../component';
 import { Color } from '../../../assets/css';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import { IconButton } from '@material-ui/core';
+import { MutateDeleteFAQ } from '../../../domain/mutation/faq.mutation';
 
 interface DeleteQuestionProps {
   question?: string;
@@ -11,35 +12,43 @@ interface DeleteQuestionProps {
 
 const DeleteQuestion: React.FC<DeleteQuestionProps> = (props: DeleteQuestionProps) => {
   const [modal, setModal] = React.useState(false);
-  const onOpenModal = () => {
-    setModal(true);
-  };
-
-  const onCloseModal = () => {
-    setModal(false);
-  };
+  const [errorModal, setErrorModal] = React.useState(false);
+  const [deleteFAQ, { error }] = MutateDeleteFAQ();
 
   const onDelete = () => {
-    // todo: Add on confirm delete
-    setModal(false);
+    deleteFAQ({
+      variables: {
+        id: props.id,
+      },
+    })
+      .then(() => {
+        setModal(false);
+        window.location.reload();
+      })
+      .catch(() => {
+        setErrorModal(true);
+      });
   };
 
+  if (error) return null;
+
   return (
-    <div>
-      <IconButton onClick={onOpenModal} size="small">
+    <>
+      <IconButton onClick={() => setModal(true)} size="small">
         <DeleteRoundedIcon style={{ color: Color.red }} />
       </IconButton>
       <ConfirmModal
         open={modal}
         onAction={onDelete}
-        onReject={onCloseModal}
-        onClose={onCloseModal}
+        onReject={() => setModal(false)}
+        onClose={() => setModal(false)}
         dialogTitle="Delete confirmation"
         dialogContent={`Are you sure you want to delete ${props.question}?`}
         actionText="Delete"
         rejectText="Cancel"
       />
-    </div>
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
+    </>
   );
 };
 
