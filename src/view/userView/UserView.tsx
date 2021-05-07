@@ -1,9 +1,9 @@
 import React from 'react';
-import { Typography, Grid, Button } from '@material-ui/core';
+import { Typography, Grid, Button, CircularProgress, hslToRgb } from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
 import { Color } from '../../assets/css';
-import { users } from './domain/user.mock';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { QueryUserById } from '../../domain/query/user.query';
 
 const UserView: React.FC = () => {
   const labelWidth = 6;
@@ -12,16 +12,16 @@ const UserView: React.FC = () => {
   const history = useHistory();
   const { userId } = useParams<{ userId: string }>();
 
-  // todo: Implement get user from backend-api instead
-  const user = users.find((user) => user.id === userId);
-  if (!user) history.push('/user-management');
-
+  const { data, loading, error } = QueryUserById(userId);
+  const user = data ? data.getUserById : { id: '', username: '', name: '', role: '' };
   const [deletePopup, setDeletePopup] = React.useState(false);
 
   const onDiscard = () => {
     setDeletePopup(false);
     history.push('/user-management');
   };
+  if (loading) return <CircularProgress />;
+  if (error || !data || !data.getUserById) return null;
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>

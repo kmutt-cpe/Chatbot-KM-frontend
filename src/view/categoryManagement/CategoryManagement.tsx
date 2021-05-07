@@ -14,15 +14,17 @@ import {
   Box,
 } from '@material-ui/core';
 import { StaffNavbar, BasicLayout } from '../../component';
-import { categories } from './domain/category.mock';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import DeleteCategory from './assets/DeleteCategory';
-import CreateCategory from './assets/CreateCategory';
-import EditCategory from './assets/EditCategory';
+import DeleteCategoryModal from './assets/DeleteCategoryModal';
+import CreateCategoryModal from './assets/CreateCategoryModal';
+import EditCategoryModal from './assets/EditCategoryModal';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import { useHistory } from 'react-router-dom';
+
+import { CircularProgress } from '@material-ui/core';
+import { QueryAllCategory } from '../../domain/query/category.query';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -59,6 +61,12 @@ const CategoryManagement: React.FC = () => {
     setPage(0);
   };
 
+  const { loading, error, data } = QueryAllCategory();
+  if (loading) return <CircularProgress />;
+  if (error) return null;
+
+  const categories = data ? data.getAllCategory : [];
+
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
       <Grid container direction="column" justify="flex-start">
@@ -85,7 +93,7 @@ const CategoryManagement: React.FC = () => {
             />
           </Grid>
           <Grid xs={2} item>
-            <CreateCategory />
+            <CreateCategoryModal />
           </Grid>
         </Grid>
 
@@ -106,39 +114,40 @@ const CategoryManagement: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categories
-                .filter((category) => {
-                  const categoryStr = category.category.toLowerCase();
-                  return categoryStr.includes(searchText.toLowerCase());
-                })
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((category) => {
-                  return (
-                    <>
-                      <StyledTableRow hover key={category.id}>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          align="center"
-                          onClick={() => onClickCategory(category.id)}
-                          style={{ ...borderColumn, cursor: 'pointer' }}
-                        >
-                          {category?.category}
-                        </TableCell>
-                        <TableCell component="th" scope="row" align="center">
-                          <Box display="flex" flexDirection="row" justifyContent="center">
-                            <Box mr={1}>
-                              <EditCategory {...category} />
+              {categories &&
+                categories
+                  .filter((category) => {
+                    const categoryStr = category.category.toLowerCase();
+                    return categoryStr.includes(searchText.toLowerCase());
+                  })
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((category) => {
+                    return (
+                      <React.Fragment key={category.id}>
+                        <StyledTableRow hover key={category.id}>
+                          <TableCell
+                            component="th"
+                            scope="row"
+                            align="center"
+                            onClick={() => onClickCategory(category.id)}
+                            style={{ ...borderColumn, cursor: 'pointer' }}
+                          >
+                            {category?.category}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="center">
+                            <Box display="flex" flexDirection="row" justifyContent="center">
+                              <Box mr={1}>
+                                <EditCategoryModal {...category} />
+                              </Box>
+                              <Box mr={1}>
+                                <DeleteCategoryModal {...category} />
+                              </Box>
                             </Box>
-                            <Box mr={1}>
-                              <DeleteCategory {...category} />
-                            </Box>
-                          </Box>
-                        </TableCell>
-                      </StyledTableRow>
-                    </>
-                  );
-                })}
+                          </TableCell>
+                        </StyledTableRow>
+                      </React.Fragment>
+                    );
+                  })}
             </TableBody>
           </Table>
         </TableContainer>
@@ -147,7 +156,7 @@ const CategoryManagement: React.FC = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 100]}
             component="div"
-            count={categories.length}
+            count={categories ? categories.length : 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onChangePage={handleChangePage}

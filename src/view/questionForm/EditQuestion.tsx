@@ -8,16 +8,20 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  CircularProgress,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { QuestionType } from './utils/QuestionType';
 import { ValidateQuestionForm } from './utils/ValidateQuestionForm';
-import { categories } from './domain/category.mock';
-import { subcategories } from './domain/subcategory.mock';
-import { useHistory, useParams } from 'react-router-dom';
-import { faqs } from './domain/faq.mock';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { MutateUpdateFAQ } from '../../domain/mutation/faq.mutation';
+import { QueryFAQById } from '../../domain/query/faq.query';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../lib/redux/reducers';
+import { FAQ } from '../../domain/interfaces/faq.interface';
+import { Category } from '../../domain/interfaces/category.interface';
 
 const EditQuestion: React.FC = () => {
   const labelWidth = 3;
@@ -26,14 +30,28 @@ const EditQuestion: React.FC = () => {
   const history = useHistory();
   const { faqId } = useParams<{ faqId: string }>();
 
-  // todo: Implement get faq from backend-api instead
-  const faq = faqs.find((faq) => faq.id === faqId);
-  if (!faq) history.push('/question-management');
+  const [createFAQ, { error }] = MutateUpdateFAQ();
+  const { loading, error: queryError, data } = QueryFAQById(faqId);
+
+  const faq: FAQ = data?.getFAQById
+    ? data.getFAQById
+    : {
+        id: '',
+        question: '',
+        answer: '',
+        lastEditor: { id: '', username: '', name: '', role: '' },
+        subcategory: { id: '', subcategory: '' },
+        category: { id: '', category: '' },
+        updatedDate: '',
+      };
 
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
-  const [categoryId, setCategoryId] = React.useState(faq?.category.id);
+  const [, setCategoryId] = React.useState('');
+  const [, setSubcategoryId] = React.useState('');
+  const [errorModal, setErrorModal] = React.useState(false);
 
-  const [, setSubcategoryId] = React.useState(faq?.subcategory.id);
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const userId = authData ? authData.id : '';
 
   const onDiscard = () => {
     setDiscardDisplay(false);
@@ -42,7 +60,6 @@ const EditQuestion: React.FC = () => {
 
   const formikUser = useFormik<QuestionType>({
     initialValues: {
-      // todo: Remove empty string
       question: faq?.question || '',
       answer: faq?.answer || '',
       subcategoryId: faq?.subcategory.id || '',
@@ -50,10 +67,41 @@ const EditQuestion: React.FC = () => {
     },
     validate: ValidateQuestionForm,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      history.goBack();
+      createFAQ({
+        variables: {
+          faq: {
+            id: faqId,
+            question: values.question,
+            answer: values.answer,
+            subcategoryId: values.subcategoryId,
+            lastEditorId: userId,
+          },
+        },
+      })
+        .then(() => {
+          history.push(`/question-list/${values.categoryId}`);
+        })
+        .catch(() => {
+          setErrorModal(true);
+        });
     },
+    enableReinitialize: true,
   });
+
+  if (!authData) return <Redirect to="/logout" />;
+  if (loading) return <CircularProgress />;
+  if (queryError || !data || !data.getAllSubcategory || !data.getFAQById || !data.getAllCategory)
+    return null;
+  const subcategories = data.getAllSubcategory;
+
+  if (subcategories.length == 0) {
+    alert('Create category or subcategory first');
+    return <Redirect to="category-management" />;
+  }
+
+  const categories: Category[] = data.getAllCategory.filter(
+    (category) => category.subcategories && category.subcategories.length > 0
+  );
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -160,7 +208,6 @@ const EditQuestion: React.FC = () => {
                   <Select
                     labelId="label"
                     id="select-subcategory"
-                    disabled={categoryId === '' ? true : false}
                     onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                       const subcategoryId = event.target.value as string;
                       formikUser.setFieldValue('subcategoryId', subcategoryId);
@@ -170,7 +217,11 @@ const EditQuestion: React.FC = () => {
                     error={formikUser.errors.subcategoryId ? true : false}
                   >
                     {subcategories
-                      .filter((subcategory) => subcategory.category.id === categoryId)
+                      .filter(
+                        (subcategory) =>
+                          subcategory.category &&
+                          subcategory.category?.id === formikUser.values.categoryId
+                      )
                       .map((subcategory) => (
                         <MenuItem key={subcategory.id} value={subcategory.id}>
                           {subcategory.subcategory}
@@ -233,6 +284,7 @@ const EditQuestion: React.FC = () => {
         actionText="Discard"
         open={discardDisplay}
       />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </BasicLayout>
   );
 };

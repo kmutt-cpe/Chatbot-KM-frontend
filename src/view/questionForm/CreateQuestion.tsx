@@ -8,15 +8,19 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  CircularProgress,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal, BackButton } from '../../component';
+import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
 import { QuestionType } from './utils/QuestionType';
 import { ValidateQuestionForm } from './utils/ValidateQuestionForm';
-import { categories } from './domain/category.mock';
-import { subcategories } from './domain/subcategory.mock';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
+import { MutateCreateFAQ } from '../../domain/mutation/faq.mutation';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../lib/redux/reducers';
+import { Category } from '../../domain/interfaces/category.interface';
+import { QueryAllSubcategory } from '../../domain/query/subcategory.query';
 
 const CreateQuestion: React.FC = () => {
   const history = useHistory();
@@ -25,8 +29,13 @@ const CreateQuestion: React.FC = () => {
 
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
   const [categoryId, setCategoryId] = React.useState('');
-
   const [, setSubcategoryId] = React.useState('');
+  const [errorModal, setErrorModal] = React.useState(false);
+
+  const [createFAQ, { error }] = MutateCreateFAQ();
+  const { loading, error: queryError, data } = QueryAllSubcategory();
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const userId = authData ? authData.id : '';
 
   const onDiscard = () => {
     setDiscardDisplay(false);
@@ -42,10 +51,41 @@ const CreateQuestion: React.FC = () => {
     },
     validate: ValidateQuestionForm,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      history.push('/question-management');
+      createFAQ({
+        variables: {
+          faq: {
+            question: values.question,
+            answer: values.answer,
+            subcategoryId: values.subcategoryId,
+            lastEditorId: userId,
+          },
+        },
+      })
+        .then(() => {
+          history.push(`/question-list/${categoryId}`);
+        })
+        .catch(() => {
+          setErrorModal(true);
+        });
     },
   });
+
+  if (!authData) return <Redirect to="/logout" />;
+  if (loading) return <CircularProgress />;
+  if (queryError || !data) return null;
+
+  const subcategories = data.getAllSubcategory;
+
+  if (subcategories.length == 0) {
+    alert('Create category or subcategory first');
+    return <Redirect to="category-management" />;
+  }
+
+  const categories: Category[] = [];
+  for (const subcategory of subcategories) {
+    if (subcategory.category && !categories.includes(subcategory.category))
+      categories.push(subcategory.category);
+  }
 
   return (
     <BasicLayout navbar={<StaffNavbar />} style={{ width: '100%' }}>
@@ -160,7 +200,10 @@ const CreateQuestion: React.FC = () => {
                     error={formikUser.errors.subcategoryId ? true : false}
                   >
                     {subcategories
-                      .filter((subcategory) => subcategory.category.id === categoryId)
+                      .filter(
+                        (subcategory) =>
+                          subcategory.category && subcategory.category?.id === categoryId
+                      )
                       .map((subcategory) => (
                         <MenuItem key={subcategory.id} value={subcategory.id}>
                           {subcategory.subcategory}
@@ -223,6 +266,7 @@ const CreateQuestion: React.FC = () => {
         actionText="Discard"
         open={discardDisplay}
       />
+      <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
     </BasicLayout>
   );
 };
