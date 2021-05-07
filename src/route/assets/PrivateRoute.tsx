@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Route, Redirect, RouteProps } from 'react-router-dom';
 import { QueryCheckAuth } from '../../domain/query/auth.query';
 import { AuthActionType } from '../../lib/redux/auth/auth.type';
+import Cookies from 'universal-cookie';
 
 const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }: RouteProps) => {
   const dispatch = useDispatch();
@@ -23,6 +24,9 @@ const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }: RouteProps) =
   dispatch({
     type: AuthActionType.REMOVE_AUTH,
   });
+  const cookies = new Cookies();
+  cookies.remove('user');
+  cookies.remove('authorization');
   return <Redirect to="/sign-in" />;
 };
 
