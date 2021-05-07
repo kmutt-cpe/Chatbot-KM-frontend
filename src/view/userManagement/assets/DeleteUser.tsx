@@ -34,12 +34,12 @@ const DeleteUser: React.FC<DeleteCategoryProps> = (props: DeleteCategoryProps) =
         window.location.reload();
       })
       .catch(() => {
+        setModal(false);
         setErrorModal(true);
       });
   };
 
   if (!authData) return <Redirect to="/logout" />;
-  if (error) return null;
 
   return (
     <div>
