@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Auto
 
 # Controls when the action will run. 
 on:
@@ -29,16 +29,13 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
           if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
       - name: rsync over ssh
-        run: rsync -r -u ./ chatbot@104.46.228.65:backend/kmutt-cpe-chatbot-back-end-api/
+        run: rsync -avz --delete-before ./ chatbot@104.46.228.65:frontend/knowledge-management-front-end/
       - name: Execute SSH commmands on remote server
         uses: JimCronqvist/action-ssh@master
         with:
           hosts: 'chatbot@104.46.228.65'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
           command: |
-            pm2 stop static-page-server-5000
-            pm2 delete static-page-server-5000
             export PATH=/home/chatbot/.nvm/versions/node/v12.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/chatbot/.nvm/versions/node/v12.22.1/bin/yarn:/home/chatbot/.nvm/versions/node/v12.22.1/bin/node
             cd ~/frontend/knowledge-management-front-end/
             yarn build
-            pm2 serve build 5000 --spa
