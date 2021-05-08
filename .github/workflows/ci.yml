@@ -36,6 +36,6 @@ jobs:
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
           command: |
             export PATH=/home/chatbot/.nvm/versions/node/v12.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/chatbot/.nvm/versions/node/v12.22.1/bin/yarn:/home/chatbot/.nvm/versions/node/v12.22.1/bin/node
-            cd ~/backend/kmutt-cpe-chatbot-back-end-api/
+            cd ~/frontend/knowledge-management-front-end/
             yarn build
             pm2 serve build 5000 --spa
