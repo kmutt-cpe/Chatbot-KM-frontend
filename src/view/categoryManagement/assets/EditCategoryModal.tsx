@@ -27,7 +27,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = (props: EditCategory
   };
 
   return (
-    <div>
+    <>
       <IconButton onClick={() => setModal(true)} size="small">
         <EditRoundedIcon style={{ color: Color.secondary }} onClick={() => setModal(true)} />
       </IconButton>
@@ -43,7 +43,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = (props: EditCategory
         required
       />
       <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
-    </div>
+    </>
   );
 };
 

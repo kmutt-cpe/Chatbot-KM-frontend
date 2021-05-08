@@ -29,7 +29,7 @@ const DeleteCategoryModal: React.FC<DeleteCategoryModalProps> = (
   };
 
   return (
-    <div>
+    <>
       <IconButton onClick={() => setAlertModal(true)} size="small">
         <DeleteRoundedIcon style={{ color: Color.red }} />
       </IconButton>
@@ -44,7 +44,7 @@ const DeleteCategoryModal: React.FC<DeleteCategoryModalProps> = (
         rejectText="Cancel"
       />
       <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
-    </div>
+    </>
   );
 };
 
