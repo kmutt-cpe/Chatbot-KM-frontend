@@ -30,8 +30,6 @@ const DeleteQuestion: React.FC<DeleteQuestionProps> = (props: DeleteQuestionProp
       });
   };
 
-  if (error) return null;
-
   return (
     <>
       <IconButton onClick={() => setModal(true)} size="small">
