@@ -36,6 +36,8 @@ jobs:
           hosts: 'chatbot@104.46.228.65'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
           command: |
+            pm2 stop static-page-server-5000
+            pm2 delete static-page-server-5000
             export PATH=/home/chatbot/.nvm/versions/node/v12.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/chatbot/.nvm/versions/node/v12.22.1/bin/yarn:/home/chatbot/.nvm/versions/node/v12.22.1/bin/node
             cd ~/frontend/knowledge-management-front-end/
             yarn build
