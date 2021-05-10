@@ -7,8 +7,8 @@ import { QueryFAQById } from '../../domain/query/faq.query';
 import { MutateDeleteFAQ } from '../../domain/mutation/faq.mutation';
 
 const QuestionView: React.FC = () => {
-  const labelWidth = 5;
-  const inputWidth = 7;
+  const labelWidth = 3;
+  const inputWidth = 9;
   const [errorModal, setErrorModal] = React.useState(false);
 
   const history = useHistory();
@@ -219,9 +219,10 @@ const QuestionView: React.FC = () => {
                   justifyContent: 'flex-start',
                   alignItems: 'center',
                   height: '100%',
+                  whiteSpace: 'pre-line',
                 }}
               >
-                {faq?.answer}
+                {faq.answer}
               </Typography>
             </Grid>
           </Grid>
