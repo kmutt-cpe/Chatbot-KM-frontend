@@ -1,9 +1,12 @@
 import React from 'react';
-import { InputModal, ErrorModal } from '../../../component';
+import { InputModal, ErrorModal, AlertModal } from '../../../component';
 import { Color } from '../../../assets/css';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import { IconButton } from '@material-ui/core';
 import { MutateUpdateCategory } from '../../../domain/mutation/category.mutation';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../../lib/redux/reducers';
+import { ModeratorAccess } from '../../../common/role';
 
 interface EditCategoryModalProps {
   category?: string;
@@ -13,7 +16,11 @@ interface EditCategoryModalProps {
 const EditCategoryModal: React.FC<EditCategoryModalProps> = (props: EditCategoryModalProps) => {
   const [modal, setModal] = React.useState(false);
   const [errorModal, setErrorModal] = React.useState(false);
+  const [alertModal, setAlertModal] = React.useState(false);
   const [updateCategory, { error }] = MutateUpdateCategory();
+
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const role = authData && authData.role ? authData.role : '';
 
   const onEdit = (category?: string) => {
     setModal(false);
@@ -28,8 +35,18 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = (props: EditCategory
 
   return (
     <>
-      <IconButton onClick={() => setModal(true)} size="small">
-        <EditRoundedIcon style={{ color: Color.secondary }} onClick={() => setModal(true)} />
+      <IconButton
+        onClick={() => {
+          for (const userRole of ModeratorAccess)
+            if (role === userRole) {
+              setModal(true);
+              break;
+            }
+          setAlertModal(true);
+        }}
+        size="small"
+      >
+        <EditRoundedIcon style={{ color: Color.secondary }} />
       </IconButton>
       <InputModal
         open={modal}
@@ -43,6 +60,14 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = (props: EditCategory
         required
       />
       <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
+      <AlertModal
+        open={alertModal}
+        handleClose={() => {
+          setAlertModal(false);
+        }}
+        alertTitle="Unauthorized"
+        alertMessage="You don't have access to this"
+      />
     </>
   );
 };
