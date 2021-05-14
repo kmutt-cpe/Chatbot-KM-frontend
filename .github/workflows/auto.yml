@@ -40,3 +40,4 @@ jobs:
             cd ~/frontend/knowledge-management-front-end/
             yarn
             yarn build
+            pm2 restart static-page-server-5000
