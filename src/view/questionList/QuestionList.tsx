@@ -15,7 +15,7 @@ import {
   Button,
   CircularProgress,
 } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, BackButton } from '../../component';
+import { StaffNavbar, BasicLayout, BackButton, AlertModal } from '../../component';
 import SearchIcon from '@material-ui/icons/Search';
 import { Color } from '../../assets/css';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -26,6 +26,9 @@ import { IconButton } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { QueryFAQByCategoryId } from '../../domain/query/faq.query';
 import { Redirect } from 'react-router-dom';
+import { ModeratorAccess } from '../../common/role';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../lib/redux/reducers';
 
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
@@ -46,6 +49,10 @@ const QuestionList: React.FC = () => {
   const [searchText, setSearchText] = React.useState('');
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
+
+  const [alertModal, setAlertModal] = React.useState(false);
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const role = authData && authData.role ? authData.role : '';
 
   const history = useHistory();
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -103,7 +110,13 @@ const QuestionList: React.FC = () => {
               color="primary"
               variant="contained"
               style={{ fontSize: '12px' }}
-              onClick={() => history.push('/create-question')}
+              onClick={() => {
+                for (const userRole of ModeratorAccess)
+                  if (role === userRole) {
+                    history.push('/create-question');
+                  }
+                setAlertModal(true);
+              }}
             >
               CREATE QUESTION
             </Button>
@@ -165,7 +178,12 @@ const QuestionList: React.FC = () => {
                           <Box display="flex" flexDirection="row" justifyContent="center">
                             <Box mr={1}>
                               <IconButton
-                                onClick={() => history.push(`/edit-question/${question.id}`)}
+                                onClick={() => {
+                                  for (const userRole of ModeratorAccess)
+                                    if (role === userRole)
+                                      return history.push(`/edit-question/${question.id}`);
+                                  setAlertModal(true);
+                                }}
                                 size="small"
                               >
                                 <EditRoundedIcon style={{ color: Color.secondary }} />
@@ -195,6 +213,14 @@ const QuestionList: React.FC = () => {
           />
         </Box>
       </Grid>
+      <AlertModal
+        open={alertModal}
+        handleClose={() => {
+          setAlertModal(false);
+        }}
+        alertTitle="Unauthorized"
+        alertMessage="You don't have access to this"
+      />
     </BasicLayout>
   );
 };
