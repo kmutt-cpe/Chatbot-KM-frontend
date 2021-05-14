@@ -1,9 +1,12 @@
 import React from 'react';
-import { ConfirmModal, ErrorModal } from '../../../component';
+import { AlertModal, ConfirmModal, ErrorModal } from '../../../component';
 import { Color } from '../../../assets/css';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import { IconButton } from '@material-ui/core';
 import { MutateDeleteSubcategory } from '../../../domain/mutation/subcategory.mutation';
+import { ModeratorAccess } from '../../../common/role';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../../lib/redux/reducers';
 
 interface DeleteCategoryModalProps {
   subcategory?: string;
@@ -17,6 +20,10 @@ const DeleteCategoryModal: React.FC<DeleteCategoryModalProps> = (
   const [errorModal, setErrorModal] = React.useState(false);
   const [deleteSubcategory, { error }] = MutateDeleteSubcategory();
 
+  const [alertModal, setAlertModal] = React.useState(false);
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const role = authData && authData.role ? authData.role : '';
+
   const onDelete = () => {
     setModal(false);
     deleteSubcategory({ variables: { id: props.id } })
@@ -28,7 +35,17 @@ const DeleteCategoryModal: React.FC<DeleteCategoryModalProps> = (
 
   return (
     <>
-      <IconButton onClick={() => setModal(true)} size="small">
+      <IconButton
+        onClick={() => {
+          for (const userRole of ModeratorAccess)
+            if (role === userRole) {
+              setModal(true);
+              break;
+            }
+          setAlertModal(true);
+        }}
+        size="small"
+      >
         <DeleteRoundedIcon style={{ color: Color.red }} />
       </IconButton>
       <ConfirmModal
@@ -42,6 +59,14 @@ const DeleteCategoryModal: React.FC<DeleteCategoryModalProps> = (
         rejectText="Cancel"
       />
       <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
+      <AlertModal
+        open={alertModal}
+        handleClose={() => {
+          setAlertModal(false);
+        }}
+        alertTitle="Unauthorized"
+        alertMessage="You don't have access to this"
+      />
     </>
   );
 };
