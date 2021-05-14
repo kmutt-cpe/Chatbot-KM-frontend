@@ -5,6 +5,7 @@ import { createBrowserHistory } from 'history';
 import Loadable from 'react-loadable';
 import PrivateRoute from './assets/PrivateRoute';
 import { CircularProgress } from '@material-ui/core';
+import { AdminAccess, ModeratorAccess } from '../common/role';
 
 const Home = Loadable({
   loader: () => import('../view/home/Home'),
@@ -89,8 +90,18 @@ export const RouteApp: React.FC = (): React.ReactElement => {
         <PrivateRoute exact path="/question-management" component={QuestionManagement} />
         <PrivateRoute exact path="/question-list/:categoryId" component={QuestionList} />
         <PrivateRoute exact path="/question-view/:faqId" component={QuestionView} />
-        <PrivateRoute exact path="/edit-question/:faqId" component={EditQuestion} />
-        <PrivateRoute exact path="/create-question" component={CreateQuestion} />
+        <PrivateRoute
+          exact
+          path="/edit-question/:faqId"
+          accessedRoles={ModeratorAccess}
+          component={EditQuestion}
+        />
+        <PrivateRoute
+          exact
+          path="/create-question"
+          accessedRoles={ModeratorAccess}
+          component={CreateQuestion}
+        />
         <PrivateRoute exact path="/category-management" component={CategoryManagement} />
         <PrivateRoute
           exact
@@ -98,9 +109,24 @@ export const RouteApp: React.FC = (): React.ReactElement => {
           component={SubcategoryManagement}
         />
         <PrivateRoute exact path="/user-management" component={UserManagement} />
-        <PrivateRoute exact path="/create-user" component={CreateUser} />
-        <PrivateRoute exact path="/edit-user/:userId" component={EditUser} />
-        <PrivateRoute exact path="/user-view/:userId" component={UserView} />
+        <PrivateRoute
+          exact
+          path="/create-user"
+          accessedRoles={ModeratorAccess}
+          component={CreateUser}
+        />
+        <PrivateRoute
+          exact
+          path="/edit-user/:userId"
+          accessedRoles={AdminAccess}
+          component={EditUser}
+        />
+        <PrivateRoute
+          exact
+          path="/user-view/:userId"
+          accessedRoles={AdminAccess}
+          component={UserView}
+        />
         <PrivateRoute exact path="/edit-profile" component={EditProfile} />
         <PrivateRoute exact path="/logout" component={Logout}></PrivateRoute>
         <Route path="/page-not-found" component={PageNotFound} />
