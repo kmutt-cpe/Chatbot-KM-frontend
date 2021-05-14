@@ -3,9 +3,14 @@ import { Box, Toolbar, AppBar, Button } from '@material-ui/core';
 import { LogoImg } from '../../assets/img';
 import UserMenu from './UserMenu';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../lib/redux/reducers';
+import { UserRole } from '../../common/role';
 
 const StaffNavbar = (): ReactElement => {
   const history = useHistory();
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+
   return (
     <AppBar
       position="static"
@@ -38,11 +43,15 @@ const StaffNavbar = (): ReactElement => {
                 CATEGORY
               </Button>
             </Box>
-            <Box mr={2.5} my={0.5}>
-              <Button color="secondary" onClick={() => history.push('/user-management')}>
-                USERS
-              </Button>
-            </Box>
+            {authData?.role === UserRole.ROOT || authData?.role === UserRole.ADMIN ? (
+              <Box mr={2.5} my={0.5}>
+                <Button color="secondary" onClick={() => history.push('/user-management')}>
+                  USERS
+                </Button>
+              </Box>
+            ) : (
+              <></>
+            )}
             <UserMenu />
           </Box>
         </Box>
