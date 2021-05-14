@@ -6,19 +6,46 @@ import { Route, Redirect, RouteProps } from 'react-router-dom';
 import { QueryCheckAuth } from '../../domain/query/auth.query';
 import { AuthActionType } from '../../lib/redux/auth/auth.type';
 import Cookies from 'universal-cookie';
+import { AlertModal } from '../../component';
+import { useHistory } from 'react-router-dom';
 
-const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }: RouteProps) => {
+interface PrivateRouteProps {
+  accessedRoles?: string[];
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps & RouteProps> = ({
+  children,
+  accessedRoles,
+  ...rest
+}: PrivateRouteProps & RouteProps) => {
   const dispatch = useDispatch();
   const { data, loading } = QueryCheckAuth();
+  const history = useHistory();
   if (loading) return <CircularProgress />;
 
   const authData = data && data.checkAuth;
-  if (authData && authData?.authorization && authData?.authorization !== '') {
+  if (authData && authData.authorization && authData.authorization !== '') {
     dispatch({
       type: AuthActionType.SET_AUTH,
       authData,
     });
-    return <Route {...rest}>{children}</Route>;
+
+    const role = data && data.checkAuth.role;
+    if (accessedRoles) {
+      for (const accesedRole of accessedRoles)
+        if (accesedRole === role) return <Route {...rest}>{children}</Route>;
+
+      return (
+        <AlertModal
+          open={true}
+          handleClose={() => {
+            history.goBack();
+          }}
+          alertTitle="Unauthorized"
+          alertMessage="You don't have access to this"
+        />
+      );
+    } else return <Route {...rest}>{children}</Route>;
   }
 
   dispatch({

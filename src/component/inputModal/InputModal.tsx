@@ -30,13 +30,15 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
     <div>
       <Dialog open={props.open} onClose={props.onClose} maxWidth="xs" fullWidth={true}>
         <div style={{ width: '100%', padding: '15px' }}>
-          <form onSubmit={() => {
-                      if (props.required && text === '') setError(true);
-                      else {
-                        setError(false);
-                        props.onAction(text);
-                      }
-                    }}>
+          <form
+            onSubmit={() => {
+              if (props.required && text === '') setError(true);
+              else {
+                setError(false);
+                props.onAction(text);
+              }
+            }}
+          >
             <DialogTitle>
               <Typography variant="h4" color="primary" align="center">
                 {props.dialogTitle || 'DialogText'}
@@ -66,12 +68,7 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    autoFocus
-                  >
+                  <Button variant="contained" color="primary" type="submit" autoFocus>
                     {props.actionText || 'Yes'}
                   </Button>
                 </Grid>

@@ -1,5 +1,13 @@
 import React from 'react';
-import { Typography, Grid, TextField, Button } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  TextField,
+  Button,
+  FormControl,
+  Select,
+  MenuItem,
+} from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
@@ -7,6 +15,8 @@ import { CreateUserType } from './utils/UserType';
 import { ValidateCreateUserForm } from './utils/ValidateUserForm';
 import { useHistory } from 'react-router-dom';
 import { MutateCreateUser } from '../../domain/mutation/user.mutation';
+import { UserRole } from '../../common/role';
+import _ from 'lodash';
 
 const CreateUserForm: React.FC = () => {
   const labelWidth = 3;
@@ -15,6 +25,7 @@ const CreateUserForm: React.FC = () => {
 
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
   const [errorModal, setErrorModal] = React.useState(false);
+  const [, setRole] = React.useState(UserRole.ADMIN as string);
   const [createUser, { error }] = MutateCreateUser();
 
   const onDiscard = () => {
@@ -28,6 +39,7 @@ const CreateUserForm: React.FC = () => {
       password: '',
       confirmPassword: '',
       name: '',
+      role: UserRole.ADMIN as string,
     },
     validate: ValidateCreateUserForm,
     onSubmit: (values) => {
@@ -37,7 +49,7 @@ const CreateUserForm: React.FC = () => {
             username: values.username.toLowerCase(),
             password: values.password,
             name: values.name,
-            role: 'admin',
+            role: values.role,
           },
         },
       })
@@ -48,6 +60,7 @@ const CreateUserForm: React.FC = () => {
           setErrorModal(true);
         });
     },
+    enableReinitialize: true,
   });
 
   return (
@@ -99,6 +112,40 @@ const CreateUserForm: React.FC = () => {
                   error={formik.errors.username ? true : false}
                   helperText={formik.errors.username || null}
                 />
+              </Grid>
+            </Grid>
+            <Grid item container direction="row" spacing={3}>
+              <Grid item xs={labelWidth}>
+                <Typography
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    height: '100%',
+                  }}
+                >
+                  Role
+                </Typography>
+              </Grid>
+              <Grid item xs={inputWidth}>
+                <FormControl style={{ minWidth: '200px' }}>
+                  <Select
+                    id="select-role"
+                    value={formik.values.role}
+                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                      const role = event.target.value as string;
+                      formik.setFieldValue('role', role);
+                      setRole(role);
+                    }}
+                    error={formik.errors.role ? true : false}
+                  >
+                    {_.values(UserRole).map((role) => (
+                      <MenuItem key={role} value={role}>
+                        {role}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
             </Grid>
             <Grid item container direction="row" spacing={3}>

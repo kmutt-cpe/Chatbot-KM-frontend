@@ -3,11 +3,13 @@ export type CreateUserType = {
   password: string;
   confirmPassword: string;
   name: string;
+  role: string;
 };
 
 export type EditUserType = {
   username: string;
   name: string;
+  role: string;
 };
 
 export type EditPasswordType = {
@@ -22,4 +24,5 @@ export type ErrorUserType = {
   password?: string;
   confirmPassword?: string;
   name?: string;
+  role?: string;
 };
