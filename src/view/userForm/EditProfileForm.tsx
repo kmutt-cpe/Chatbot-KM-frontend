@@ -25,11 +25,12 @@ const EditProfileForm: React.FC = () => {
   const { data, loading, error: queryError } = QueryUserById(userId);
   const user = data ? data.getUserById : { id: '', username: '', name: '', role: '' };
 
-  const [updateUser, { error }] = MutateUpdateUser();
+  const [updateUser, { error, loading: loadingMutate }] = MutateUpdateUser();
   const formikUser = useFormik<EditUserType>({
     initialValues: {
       username: user.username,
       name: user.name,
+      role: user.role,
     },
     validate: ValidateEditUserForm,
     onSubmit: (values) => {
@@ -38,7 +39,7 @@ const EditProfileForm: React.FC = () => {
           user: {
             id: userId,
             name: values.name,
-            role: user.role,
+            role: values.role,
           },
         },
       })
@@ -59,6 +60,7 @@ const EditProfileForm: React.FC = () => {
 
   if (!authData) return <Redirect to="/logout" />;
   if (loading) return <CircularProgress />;
+  if (loadingMutate) return null;
   if (queryError) return null;
 
   return (

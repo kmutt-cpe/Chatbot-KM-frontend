@@ -1,5 +1,14 @@
 import React from 'react';
-import { Typography, Grid, TextField, Button, CircularProgress } from '@material-ui/core';
+import {
+  Typography,
+  Grid,
+  TextField,
+  Button,
+  CircularProgress,
+  FormControl,
+  Select,
+  MenuItem,
+} from '@material-ui/core';
 import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
 import { Color } from '../../assets/css';
 import { useFormik } from 'formik';
@@ -9,6 +18,7 @@ import ChangePasswordBlock from './assets/ChangePasswordBlock';
 import { useHistory, useParams } from 'react-router-dom';
 import { QueryUserById } from '../../domain/query/user.query';
 import { MutateUpdateUser } from '../../domain/mutation/user.mutation';
+import { UserRoleList } from '../../common/role';
 
 const EditUserForm: React.FC = () => {
   const [discardDisplay, setDiscardDisplay] = React.useState(false);
@@ -21,6 +31,7 @@ const EditUserForm: React.FC = () => {
 
   const { data, loading, error: queryError } = QueryUserById(userId);
   const [updateUser, { error }] = MutateUpdateUser();
+  const [, setRole] = React.useState('');
 
   const onDiscard = () => {
     setDiscardDisplay(false);
@@ -29,10 +40,11 @@ const EditUserForm: React.FC = () => {
 
   const user = data?.getUserById ? data.getUserById : { id: '', username: '', name: '', role: '' };
 
-  const formikUser = useFormik<EditUserType>({
+  const formik = useFormik<EditUserType>({
     initialValues: {
-      username: user.username || '',
-      name: user.name || '',
+      username: user.username,
+      name: user.name,
+      role: user.role,
     },
     validate: ValidateEditUserForm,
     onSubmit: (values) => {
@@ -41,7 +53,7 @@ const EditUserForm: React.FC = () => {
           user: {
             id: userId,
             name: values.name,
-            role: user.role,
+            role: values.role,
           },
         },
       })
@@ -82,7 +94,7 @@ const EditUserForm: React.FC = () => {
             marginBottom: '20px',
           }}
         />
-        <form onSubmit={formikUser.handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
           <Grid item container direction="column" spacing={3}>
             <Grid item container direction="row" spacing={3}>
               <Grid item xs={labelWidth}>
@@ -102,12 +114,46 @@ const EditUserForm: React.FC = () => {
                   id="username"
                   variant="outlined"
                   style={{ width: '100%' }}
-                  onChange={formikUser.handleChange}
-                  value={formikUser.values.username}
-                  error={formikUser.errors.username ? true : false}
-                  helperText={formikUser.errors.username || null}
+                  onChange={formik.handleChange}
+                  value={formik.values.username}
+                  error={formik.errors.username ? true : false}
+                  helperText={formik.errors.username || null}
                   disabled
                 />
+              </Grid>
+            </Grid>
+            <Grid item container direction="row" spacing={3}>
+              <Grid item xs={labelWidth}>
+                <Typography
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    height: '100%',
+                  }}
+                >
+                  Role
+                </Typography>
+              </Grid>
+              <Grid item xs={inputWidth}>
+                <FormControl style={{ minWidth: '200px' }}>
+                  <Select
+                    id="select-role"
+                    value={formik.values.role}
+                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                      const role = event.target.value as string;
+                      formik.setFieldValue('role', role);
+                      setRole(role);
+                    }}
+                    error={formik.errors.role ? true : false}
+                  >
+                    {UserRoleList.map((role) => (
+                      <MenuItem key={role} value={role}>
+                        {role}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
             </Grid>
             <ChangePasswordBlock
@@ -133,10 +179,10 @@ const EditUserForm: React.FC = () => {
                   id="name"
                   variant="outlined"
                   style={{ width: '100%' }}
-                  onChange={formikUser.handleChange}
-                  value={formikUser.values.name}
-                  error={formikUser.errors.name ? true : false}
-                  helperText={formikUser.errors.name || null}
+                  onChange={formik.handleChange}
+                  value={formik.values.name}
+                  error={formik.errors.name ? true : false}
+                  helperText={formik.errors.name || null}
                   disabled={changePasswordState}
                 />
               </Grid>
