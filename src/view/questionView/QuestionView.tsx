@@ -1,15 +1,26 @@
 import React from 'react';
 import { Typography, Grid, Button, CircularProgress } from '@material-ui/core';
-import { StaffNavbar, BasicLayout, ConfirmModal, BackButton, ErrorModal } from '../../component';
+import {
+  StaffNavbar,
+  BasicLayout,
+  ConfirmModal,
+  BackButton,
+  ErrorModal,
+  AlertModal,
+} from '../../component';
 import { Color } from '../../assets/css';
 import { useHistory, useParams } from 'react-router-dom';
 import { QueryFAQById } from '../../domain/query/faq.query';
 import { MutateDeleteFAQ } from '../../domain/mutation/faq.mutation';
+import { ModeratorAccess } from '../../common/role';
+import { useSelector } from 'react-redux';
+import { RootReducersType } from '../../lib/redux/reducers';
 
 const QuestionView: React.FC = () => {
   const labelWidth = 3;
   const inputWidth = 9;
   const [errorModal, setErrorModal] = React.useState(false);
+  const [alertModal, setAlertModal] = React.useState(false);
 
   const history = useHistory();
   const { faqId } = useParams<{ faqId: string }>();
@@ -17,6 +28,9 @@ const QuestionView: React.FC = () => {
   const { data, loading, error: faqError } = QueryFAQById(faqId);
   const [deletePopup, setDeletePopup] = React.useState(false);
   const [deleteFAQ, { error }] = MutateDeleteFAQ();
+
+  const authData = useSelector((state: RootReducersType) => state.AuthReducer.authData);
+  const role = authData && authData.role ? authData.role : '';
 
   const onDelete = () => {
     deleteFAQ({
@@ -242,7 +256,11 @@ const QuestionView: React.FC = () => {
                 type="submit"
                 style={{ width: '100px' }}
                 onClick={() => {
-                  history.push(`/edit-question/${faqId}`);
+                  for (const userRole of ModeratorAccess)
+                    if (role === userRole) {
+                      history.push(`/edit-question/${faqId}`);
+                    }
+                  setAlertModal(true);
                 }}
               >
                 Edit
@@ -251,7 +269,11 @@ const QuestionView: React.FC = () => {
             <Grid item>
               <Button
                 onClick={() => {
-                  setDeletePopup(true);
+                  for (const userRole of ModeratorAccess)
+                    if (role === userRole) {
+                      setDeletePopup(true);
+                    }
+                  setAlertModal(true);
                 }}
                 style={{ color: Color.red }}
               >
@@ -272,6 +294,14 @@ const QuestionView: React.FC = () => {
         open={deletePopup}
       />
       <ErrorModal open={errorModal} handleClose={() => setErrorModal(false)} error={error} />
+      <AlertModal
+        open={alertModal}
+        handleClose={() => {
+          setAlertModal(false);
+        }}
+        alertTitle="Unauthorized"
+        alertMessage="You don't have access to this"
+      />
     </BasicLayout>
   );
 };
