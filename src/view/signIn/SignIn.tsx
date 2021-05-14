@@ -1,4 +1,4 @@
-import { Grid, Typography, TextField, Button } from '@material-ui/core';
+import { Grid, Typography, TextField, Button, CircularProgress } from '@material-ui/core';
 import React from 'react';
 import { LandingNavbar, Footer, BasicLayout, AlertModal } from '../../component';
 import { BackgroundImg, LogoImg } from '../../assets/img';
@@ -56,7 +56,7 @@ const SignIn = (): React.ReactElement => {
     },
   });
 
-  const [getLogin, { error, data }] = QueryLogin();
+  const [getLogin, { error, data, loading }] = QueryLogin();
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -64,6 +64,7 @@ const SignIn = (): React.ReactElement => {
   const cookies = new Cookies();
   const userCookie = cookies.get('user');
   const authCookie = cookies.get('authorization');
+  if (loading) return <CircularProgress />;
   if (userCookie && authCookie) {
     return <Redirect to="/question-management" />;
   } else {
