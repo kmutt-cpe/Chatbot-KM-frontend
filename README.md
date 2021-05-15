@@ -40,7 +40,7 @@ This project is a senior project of CPE KMUTT Chatbot group 59 in King Mongkut's
 2. Start `Chatbot-Backend-API` (See Chatbot-Backend-API for how to start).
 3. Use `yarn build` to build static file and keep in `build` folder.
 4. (Optional) Use `serve -s build` for serve static file in build folder. But you can use other tools to serve static file.
-   - But if you want to run with pm2 use `pm2 serve build 8082 --spa`. [Read more](https://www.loginradius.com/blog/async/react-app-deployment/) about this command.
+   - But if you want to run with pm2 use `pm2 serve build 5000 --spa`. [Read more](https://www.loginradius.com/blog/async/react-app-deployment/) about this command.
 
 ## Available Scripts
 
