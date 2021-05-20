@@ -42,7 +42,7 @@ const DeleteCategoryModal: React.FC<DeleteCategoryModalProps> = (
           for (const userRole of ModeratorAccess)
             if (role === userRole) {
               setConfirmModal(true);
-              break;
+              return;
             }
           setAlertModal(true);
         }}

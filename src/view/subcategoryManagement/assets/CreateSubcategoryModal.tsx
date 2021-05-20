@@ -42,7 +42,7 @@ const CreateSubcategoryModal: React.FC<CreateSubcategoryModalProps> = (
           for (const userRole of ModeratorAccess)
             if (role === userRole) {
               setModal(true);
-              break;
+              return;
             }
           setAlertModal(true);
         }}

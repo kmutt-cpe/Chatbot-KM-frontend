@@ -38,7 +38,7 @@ const EditCategory: React.FC<EditCategoryProps> = (props: EditCategoryProps) => 
           for (const userRole of ModeratorAccess)
             if (role === userRole) {
               setModal(true);
-              break;
+              return;
             }
           setAlertModal(true);
         }}
