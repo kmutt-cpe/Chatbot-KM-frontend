@@ -28,7 +28,7 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
 
   return (
     <div>
-      <Dialog open={props.open} onClose={props.onClose} maxWidth="xs" fullWidth={true}>
+      <Dialog open={props.open} onClose={props.onClose} maxWidth="sm" fullWidth={true}>
         <div style={{ width: '100%', padding: '15px' }}>
           <form
             onSubmit={() => {
@@ -45,7 +45,7 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
               </Typography>
             </DialogTitle>
             <DialogContent>
-              <Grid container direction="row" justify="center" spacing={1}>
+              <Grid container direction="row" justify="center">
                 <Grid item xs={8}>
                   <TextField
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
