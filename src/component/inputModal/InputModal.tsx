@@ -28,8 +28,8 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
 
   return (
     <div>
-      <Dialog open={props.open} onClose={props.onClose} style={{ width: '180px' }}>
-        <div style={{ width: '100%', padding: '15px' }}>
+      <Dialog open={props.open} onClose={props.onClose}>
+        <div style={{ width: '500px', padding: '10px' }}>
           <form
             onSubmit={() => {
               if (props.required && text === '') setError(true);
