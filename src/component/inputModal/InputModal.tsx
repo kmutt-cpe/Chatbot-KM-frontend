@@ -28,7 +28,7 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
 
   return (
     <div>
-      <Dialog open={props.open} onClose={props.onClose} maxWidth="sm" fullWidth={true}>
+      <Dialog open={props.open} onClose={props.onClose} style={{ width: '180px' }}>
         <div style={{ width: '100%', padding: '15px' }}>
           <form
             onSubmit={() => {
