@@ -37,3 +37,4 @@ jobs:
             cd ~/frontend/knowledge-management-front-end/
             yarn
             yarn build
+            pm2 serve build 5000 --spa
