@@ -272,6 +272,7 @@ const QuestionView: React.FC = () => {
                   for (const userRole of ModeratorAccess)
                     if (role === userRole) {
                       setDeletePopup(true);
+                      return;
                     }
                   setAlertModal(true);
                 }}
